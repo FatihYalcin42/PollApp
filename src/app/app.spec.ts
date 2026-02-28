@@ -14,10 +14,11 @@ describe('App', () => {
     expect(app).toBeTruthy();
   });
 
-  it('should render title', async () => {
+  it('should render hero headline', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, poll-app');
+    const headline = compiled.querySelector('.hero__title')?.textContent ?? '';
+    expect(headline).toMatch(/Collect Feedback,\s*Unlock Ideas/);
   });
 });

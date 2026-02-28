@@ -1,0 +1,138 @@
+:host {
+  display: block;
+  min-height: 100dvh;
+}
+
+.home {
+  position: relative;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(1.5rem, 4vw, 4rem);
+  overflow: hidden;
+  background: var(--color-bg);
+}
+
+.hero {
+  position: relative;
+  z-index: 2;
+  width: min(960px, 100%);
+}
+
+.hero__content {
+  max-width: 44.5rem;
+}
+
+.hero__title {
+  margin: 0 0 clamp(1rem, 3vw, 2rem);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(3.4rem, 8vw, 6.25rem);
+  line-height: 0.89;
+  letter-spacing: 0;
+}
+
+.hero__title span {
+  color: var(--color-accent);
+  opacity: 0;
+  transform: translateY(18px) scale(0.98);
+  animation: title-in 700ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.hero__title span:last-child {
+  animation-delay: 140ms;
+}
+
+.hero__subtitle {
+  margin: 0;
+  max-width: 41.625rem;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: clamp(1.05rem, 2.5vw, 1.5rem);
+  line-height: 1.28;
+  color: var(--color-text);
+  opacity: 0;
+  transform: translateY(16px);
+  animation: subtitle-in 700ms ease forwards;
+  animation-delay: 260ms;
+}
+
+.background-glow {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(45px);
+  pointer-events: none;
+  animation: pulse 6s ease-in-out infinite alternate;
+}
+
+.background-glow--left {
+  left: -12rem;
+  top: -9rem;
+  width: min(38vw, 27rem);
+  aspect-ratio: 1;
+  background: rgb(255 183 112 / 36%);
+}
+
+.background-glow--right {
+  right: -10rem;
+  bottom: -14rem;
+  width: min(36vw, 24rem);
+  aspect-ratio: 1;
+  background: rgb(255 255 255 / 13%);
+  animation-delay: 600ms;
+}
+
+@keyframes title-in {
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes subtitle-in {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  from {
+    transform: scale(0.96);
+  }
+  to {
+    transform: scale(1.08);
+  }
+}
+
+@media (max-width: 1100px) {
+  .hero {
+    text-align: center;
+  }
+
+  .hero__content {
+    max-width: 47rem;
+  }
+
+  .hero__title span {
+    margin-inline: auto;
+  }
+
+  .hero__subtitle {
+    margin-inline: auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero__title {
+    font-size: clamp(2.6rem, 14vw, 3.5rem);
+  }
+
+  .hero__subtitle {
+    line-height: 1.4;
+  }
+}
