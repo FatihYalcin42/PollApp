@@ -283,7 +283,7 @@
 }
 
 .description-block {
-  width: min(418px, 100%);
+  width: min(454px, 100%);
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -303,9 +303,17 @@
   font-weight: 400;
 }
 
+.description-block__input-row {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 26px;
+  align-items: start;
+  gap: 10px;
+}
+
 .description-block__input {
-  width: 418px;
-  max-width: 100%;
+  width: 100%;
+  max-width: none;
   height: 108px;
   box-sizing: border-box;
   display: block;
@@ -322,6 +330,10 @@
   font-size: 16px;
   line-height: 1.35;
   resize: none;
+}
+
+.description-block__delete {
+  margin-top: 0;
 }
 
 .description-block__input:focus {
@@ -532,6 +544,10 @@
   }
 
   .description-block {
+    width: 100%;
+  }
+
+  .description-block__input-row {
     width: 100%;
   }
 
