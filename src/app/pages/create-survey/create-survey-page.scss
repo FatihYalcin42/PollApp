@@ -171,9 +171,18 @@
   background: transparent;
   color: #fefdff;
   cursor: pointer;
-  transition:
-    background-color 160ms ease,
-    box-shadow 160ms ease;
+  transition: background-color 160ms ease;
+}
+
+.category-dropdown-button::after {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border-radius: 3px;
+  border: 1px solid rgb(254 253 255 / 14%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 160ms ease;
 }
 
 .category-dropdown-button:focus-visible {
@@ -213,7 +222,12 @@
 .category-dropdown-button:focus-visible,
 .category-dropdown-button.is-open {
   background: rgb(217 217 217 / 5%);
-  box-shadow: inset 0 0 0 1px rgb(254 253 255 / 18%);
+}
+
+.category-dropdown-button:hover::after,
+.category-dropdown-button:focus-visible::after,
+.category-dropdown-button.is-open::after {
+  opacity: 1;
 }
 
 .category-dropdown-button.is-open .category-dropdown__arrow {
