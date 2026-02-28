@@ -217,17 +217,15 @@
 
 .surveys__title {
   margin: 0 auto;
-  display: inline-block;
-  padding: 0.1em 0.32em;
+  display: block;
+  width: fit-content;
   font-family: var(--font-display);
   font-weight: 400;
   font-size: 72px;
   line-height: 1;
   letter-spacing: 0;
   text-align: center;
-  color: var(--color-bg);
-  background: #ffb770;
-  border-radius: 12px;
+  color: var(--color-accent);
 }
 
 .surveys__ending {
