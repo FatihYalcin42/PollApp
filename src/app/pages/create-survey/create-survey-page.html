@@ -1,13 +1,24 @@
 <main class="create-survey-page">
   <section class="create-survey-canvas" aria-label="Create survey workspace">
     <h1 class="create-survey-title">Create new survey</h1>
-    <div class="create-survey-input-row">
-      <input class="create-survey-input" type="text" aria-label="Survey title" />
+    <div class="create-survey-inputs">
+      <div class="create-survey-input-row">
+        <input class="create-survey-input" type="text" aria-label="Survey title" />
 
-      <button class="delete-button" type="button" aria-label="Delete survey input">
-        <img class="delete-button__icon" src="/assets/delete-icon.svg" alt="" />
-        <img class="delete-button__icon-hover" src="/assets/delete-icon-hover.svg" alt="" />
-      </button>
+        <button class="delete-button" type="button" aria-label="Delete survey input">
+          <img class="delete-button__icon" src="/assets/delete-icon.svg" alt="" />
+          <img class="delete-button__icon-hover" src="/assets/delete-icon-hover.svg" alt="" />
+        </button>
+      </div>
+
+      <div class="create-survey-input-row">
+        <input class="create-survey-input create-survey-input--short" type="text" aria-label="Option" />
+
+        <button class="delete-button" type="button" aria-label="Delete option input">
+          <img class="delete-button__icon" src="/assets/delete-icon.svg" alt="" />
+          <img class="delete-button__icon-hover" src="/assets/delete-icon-hover.svg" alt="" />
+        </button>
+      </div>
     </div>
   </section>
 </main>

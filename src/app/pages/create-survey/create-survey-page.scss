@@ -49,6 +49,12 @@
   border: 0;
 }
 
+.create-survey-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
 .create-survey-input-row {
   display: flex;
   align-items: center;
@@ -75,6 +81,10 @@
   font-size: 16px;
   line-height: 1;
   color: #221227;
+}
+
+.create-survey-input--short {
+  width: 222px;
 }
 
 .create-survey-input:focus {
