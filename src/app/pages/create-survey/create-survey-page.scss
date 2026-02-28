@@ -1,0 +1,39 @@
+:host {
+  display: block;
+  min-height: 100dvh;
+}
+
+.create-survey-page {
+  min-height: 100dvh;
+  padding-top: 72px;
+  padding-left: 109px;
+  background: var(--color-bg);
+  overflow-x: auto;
+}
+
+.create-survey-canvas {
+  width: 1166px;
+  height: 844px;
+  opacity: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  padding: 40px 54px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 100px;
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+  background: #35273a;
+}
+
+@media (max-width: 1320px) {
+  .create-survey-page {
+    padding: 72px 1.5rem 1.5rem;
+  }
+
+  .create-survey-canvas {
+    width: min(1166px, 100%);
+    min-height: 844px;
+    height: auto;
+  }
+}
