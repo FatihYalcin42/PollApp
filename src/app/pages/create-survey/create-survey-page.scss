@@ -335,6 +335,36 @@
   border-bottom-left-radius: 5px;
 }
 
+.add-answer-button {
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #fefdff;
+  cursor: pointer;
+}
+
+.add-answer-button__text {
+  font-family: 'Nokora', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.add-answer-button__icon {
+  width: 16px;
+  height: 16px;
+  opacity: 1;
+  position: relative;
+  top: 2px;
+  left: 0;
+  display: block;
+}
+
 @media (max-width: 900px) {
   .create-survey-input-row--split {
     width: 100%;
