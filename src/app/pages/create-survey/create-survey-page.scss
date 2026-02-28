@@ -29,6 +29,19 @@
   background: #35273a;
 }
 
+.create-survey-title {
+  margin: 0;
+  width: fit-content;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 56px;
+  line-height: 1;
+  letter-spacing: 0;
+  color: #ee9236;
+  background: transparent;
+  border: 0;
+}
+
 @media (max-width: 1320px) {
   .create-survey-page {
     padding: 72px 1.5rem 1.5rem;
