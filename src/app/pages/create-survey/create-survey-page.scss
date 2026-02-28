@@ -49,6 +49,12 @@
   border: 0;
 }
 
+.create-survey-input-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .create-survey-input {
   width: 429px;
   max-width: 100%;
@@ -74,4 +80,49 @@
 .create-survey-input:focus {
   outline: 2px solid rgb(238 146 54 / 40%);
   outline-offset: 1px;
+}
+
+.delete-button {
+  position: relative;
+  width: 26px;
+  height: 26px;
+  opacity: 1;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 4px;
+  border: 0;
+  border-radius: 3px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.delete-button img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.delete-button__icon {
+  opacity: 1;
+  transition: opacity 180ms ease;
+}
+
+.delete-button__icon-hover {
+  position: absolute;
+  inset: 4px;
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+
+.delete-button:hover .delete-button__icon,
+.delete-button:focus-visible .delete-button__icon {
+  opacity: 0;
+}
+
+.delete-button:hover .delete-button__icon-hover,
+.delete-button:focus-visible .delete-button__icon-hover {
+  opacity: 1;
 }
