@@ -67,13 +67,20 @@
       <section class="question-block" aria-label="Question block">
         <h2 class="question-block__title">1. Question</h2>
 
-        <div class="question-block__input-wrap">
-          <button class="delete-button question-block__delete" type="button" aria-label="Delete question">
-            <img class="delete-button__icon" src="/assets/delete-icon.svg" alt="" />
-            <img class="delete-button__icon-hover" src="/assets/delete-icon-hover.svg" alt="" />
-          </button>
+        <div class="question-block__row">
+          <div class="question-block__input-wrap">
+            <button class="delete-button question-block__delete" type="button" aria-label="Delete question">
+              <img class="delete-button__icon" src="/assets/delete-icon.svg" alt="" />
+              <img class="delete-button__icon-hover" src="/assets/delete-icon-hover.svg" alt="" />
+            </button>
 
-          <input class="create-survey-input question-block__input" type="text" aria-label="Question text" />
+            <input class="create-survey-input question-block__input" type="text" aria-label="Question text" />
+          </div>
+
+          <button class="add-question-button" type="button" aria-label="Add new question">
+            <span class="add-question-button__text">Add new question</span>
+            <img class="add-question-button__icon" src="/assets/add_circle-white.svg" alt="" />
+          </button>
         </div>
 
         <div class="answers-block" aria-label="Answers">
