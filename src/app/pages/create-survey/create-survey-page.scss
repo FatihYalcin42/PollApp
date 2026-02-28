@@ -62,9 +62,10 @@
 }
 
 .create-survey-input-row--split {
-  width: min(100%, 794px);
-  justify-content: space-between;
-  gap: 24px;
+  width: auto;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: clamp(3.5rem, 9vw, 7rem);
 }
 
 .create-survey-input-row__left {
@@ -156,6 +157,7 @@
   display: block;
   flex: 0 0 206px;
   object-fit: contain;
+  margin-top: -14px;
 }
 
 @media (max-width: 900px) {
@@ -164,5 +166,9 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
+  }
+
+  .category-dropdown {
+    margin-top: 0;
   }
 }
