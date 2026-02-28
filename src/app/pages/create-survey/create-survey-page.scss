@@ -336,15 +336,26 @@
 }
 
 .add-answer-button {
+  position: relative;
   width: fit-content;
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  padding: 0;
+  padding: 0 0 6px;
   border: 0;
   background: transparent;
   color: #fefdff;
   cursor: pointer;
+}
+
+.add-answer-button::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: #fefdff;
 }
 
 .add-answer-button__text {
