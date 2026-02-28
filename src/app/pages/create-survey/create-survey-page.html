@@ -53,7 +53,15 @@
         </div>
 
         <div class="answers-block" aria-label="Answers">
-          <h3 class="answers-block__title">Answers</h3>
+          <div class="answers-block__header">
+            <h3 class="answers-block__title">Answers</h3>
+
+            <label class="answers-toggle" for="allow-multiple-answers">
+              <input class="answers-toggle__input" id="allow-multiple-answers" type="checkbox" />
+              <span class="answers-toggle__checkbox" aria-hidden="true"></span>
+              <span class="answers-toggle__text">Allow multiple answers.</span>
+            </label>
+          </div>
 
           <div class="answer-row">
             <span class="answer-row__label">A.</span>

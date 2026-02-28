@@ -296,6 +296,14 @@
   gap: 12px;
 }
 
+.answers-block__header {
+  width: min(713px, 100%);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
 .answers-block__title {
   margin: 0;
   font-family: 'Mulish', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -304,6 +312,54 @@
   line-height: 1;
   letter-spacing: 0;
   color: #fefdff;
+}
+
+.answers-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.answers-toggle__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.answers-toggle__checkbox {
+  width: 26px;
+  height: 26px;
+  flex: 0 0 26px;
+  border-radius: 3px;
+  background: url('/assets/checkbox.svg') center / contain no-repeat;
+}
+
+.answers-toggle:hover .answers-toggle__checkbox,
+.answers-toggle__input:focus-visible + .answers-toggle__checkbox {
+  background-image: url('/assets/checkbox-hover.svg');
+}
+
+.answers-toggle__input:checked + .answers-toggle__checkbox {
+  background-image: url('/assets/checkbox-click.svg');
+}
+
+.answers-toggle__text {
+  font-family: 'Mulish', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 1;
+  letter-spacing: 0;
+  color: #fefdff;
+  white-space: nowrap;
 }
 
 .answer-row {
@@ -406,5 +462,12 @@
 
   .answer-row__input {
     width: min(363px, 100%);
+  }
+
+  .answers-block__header {
+    width: 100%;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
   }
 }
