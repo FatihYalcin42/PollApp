@@ -116,6 +116,69 @@
   background: #8e709929;
 }
 
+.create-survey-footer {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.create-survey-submit-button {
+  width: 99px;
+  height: 48px;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border: 0;
+  border-radius: 10px;
+  background: #ffcfa1;
+  color: #221227;
+  cursor: pointer;
+  overflow: hidden;
+  white-space: nowrap;
+  transition:
+    width 200ms ease,
+    background-color 180ms ease;
+}
+
+.create-survey-submit-button:hover,
+.create-survey-submit-button:focus-visible {
+  width: 131px;
+  background: #ffb770;
+}
+
+.create-survey-submit-button:focus-visible {
+  outline: none;
+}
+
+.create-survey-submit-button__text {
+  font-family: 'Nokora', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.create-survey-submit-button__icon {
+  width: 0;
+  height: 16px;
+  opacity: 0;
+  margin-left: 0;
+  display: block;
+  transition:
+    width 200ms ease,
+    margin-left 200ms ease,
+    opacity 140ms ease;
+}
+
+.create-survey-submit-button:hover .create-survey-submit-button__icon,
+.create-survey-submit-button:focus-visible .create-survey-submit-button__icon {
+  width: 18px;
+  margin-left: 2px;
+  opacity: 1;
+}
+
 .create-survey-top-row {
   display: flex;
   align-items: flex-start;
@@ -693,5 +756,9 @@
 
   .answers-block {
     width: 100%;
+  }
+
+  .create-survey-footer {
+    justify-content: flex-start;
   }
 }
