@@ -1,13 +1,14 @@
 :host {
   display: block;
   min-height: 100dvh;
+  background: #ffffff;
 }
 
 .create-survey-page {
   min-height: 100dvh;
   padding-top: 72px;
   padding-left: 109px;
-  background: var(--color-bg);
+  background: #ffffff;
   overflow-x: auto;
 }
 
@@ -15,10 +16,12 @@
   width: 1166px;
   height: 844px;
   opacity: 1;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: 48px;
   padding: 40px 54px;
+  border: 1px solid #faf5fe;
   border-top-left-radius: 5px;
   border-top-right-radius: 100px;
   border-bottom-right-radius: 5px;
