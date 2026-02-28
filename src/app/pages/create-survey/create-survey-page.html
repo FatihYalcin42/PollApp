@@ -4,40 +4,49 @@
     <div class="create-survey-form-surface">
       <div class="create-survey-top-row">
         <div class="create-survey-inputs">
-          <div class="create-survey-input-row">
-            <input class="create-survey-input" type="text" aria-label="Survey title" />
+          <div class="create-survey-input-group">
+            <label class="create-survey-field-title" for="survey-name-input">Survey name</label>
+            <div class="create-survey-input-row">
+              <input class="create-survey-input" id="survey-name-input" type="text" aria-label="Survey title" />
 
-            <button class="delete-button" type="button" aria-label="Delete survey input">
-              <img class="delete-button__icon" src="/assets/delete-icon.svg" alt="" />
-              <img class="delete-button__icon-hover" src="/assets/delete-icon-hover.svg" alt="" />
-            </button>
-          </div>
-
-          <div class="create-survey-input-row create-survey-input-row--split">
-            <div class="create-survey-input-row__left">
-              <input
-                class="create-survey-input create-survey-input--short"
-                type="text"
-                aria-label="Set end date optional"
-              />
-
-              <button class="delete-button" type="button" aria-label="Delete option input">
+              <button class="delete-button" type="button" aria-label="Delete survey input">
                 <img class="delete-button__icon" src="/assets/delete-icon.svg" alt="" />
                 <img class="delete-button__icon-hover" src="/assets/delete-icon-hover.svg" alt="" />
               </button>
             </div>
+          </div>
 
-            <button
-              class="category-dropdown-button"
-              type="button"
-              aria-label="Choose category dropdown"
-              [attr.aria-expanded]="isCategoryDropdownOpen"
-              [class.is-open]="isCategoryDropdownOpen"
-              (click)="toggleCategoryDropdown()"
-            >
-              <span class="category-dropdown__label">Choose categorie</span>
-              <span class="category-dropdown__arrow" aria-hidden="true"></span>
-            </button>
+          <div class="create-survey-input-group create-survey-input-group--split">
+            <label class="create-survey-field-title" for="survey-end-date-input">
+              Set end date <span class="create-survey-field-title-optional">(optional)</span>
+            </label>
+            <div class="create-survey-input-row create-survey-input-row--split">
+              <div class="create-survey-input-row__left">
+                <input
+                  class="create-survey-input create-survey-input--short"
+                  id="survey-end-date-input"
+                  type="text"
+                  aria-label="Set end date optional"
+                />
+
+                <button class="delete-button" type="button" aria-label="Delete option input">
+                  <img class="delete-button__icon" src="/assets/delete-icon.svg" alt="" />
+                  <img class="delete-button__icon-hover" src="/assets/delete-icon-hover.svg" alt="" />
+                </button>
+              </div>
+
+              <button
+                class="category-dropdown-button"
+                type="button"
+                aria-label="Choose category dropdown"
+                [attr.aria-expanded]="isCategoryDropdownOpen"
+                [class.is-open]="isCategoryDropdownOpen"
+                (click)="toggleCategoryDropdown()"
+              >
+                <span class="category-dropdown__label">Choose categorie</span>
+                <span class="category-dropdown__arrow" aria-hidden="true"></span>
+              </button>
+            </div>
           </div>
         </div>
 

@@ -81,6 +81,27 @@
   gap: 12px;
 }
 
+.create-survey-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.create-survey-field-title {
+  margin: 0;
+  width: fit-content;
+  font-family: 'Mulish', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 1;
+  letter-spacing: 0;
+  color: #fefdff;
+}
+
+.create-survey-field-title-optional {
+  font-weight: 400;
+}
+
 .create-survey-input-row {
   display: flex;
   align-items: center;
