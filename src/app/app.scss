@@ -91,7 +91,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 138px;
+  width: 172px;
   height: 48px;
   padding: 12px 16px;
   gap: 10px;
@@ -101,7 +101,6 @@
   background: transparent;
   cursor: pointer;
   overflow: hidden;
-  transition: transform 220ms ease;
 }
 
 .new-survey-button img {
@@ -122,10 +121,6 @@
   inset: 0;
   opacity: 0;
   transition: opacity 240ms ease;
-}
-
-.new-survey-button:hover {
-  transform: translateY(-1px);
 }
 
 .new-survey-button:hover .new-survey-button__base {
