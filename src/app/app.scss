@@ -14,6 +14,19 @@
   background: var(--color-bg);
 }
 
+.brand-logo {
+  position: absolute;
+  top: clamp(1rem, 2.6vw, 2rem);
+  left: clamp(1rem, 2.8vw, 2.2rem);
+  z-index: 3;
+  width: clamp(8.5rem, 15vw, 13rem);
+  height: auto;
+  opacity: 0;
+  transform: translateY(-8px);
+  animation: logo-in 480ms ease forwards;
+  animation-delay: 120ms;
+}
+
 .hero {
   position: relative;
   z-index: 2;
@@ -100,6 +113,13 @@
   }
 }
 
+@keyframes logo-in {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @keyframes pulse {
   from {
     transform: scale(0.96);
@@ -128,6 +148,10 @@
 }
 
 @media (max-width: 640px) {
+  .brand-logo {
+    width: clamp(7rem, 28vw, 9rem);
+  }
+
   .hero__title {
     font-size: clamp(2.6rem, 14vw, 3.5rem);
   }
