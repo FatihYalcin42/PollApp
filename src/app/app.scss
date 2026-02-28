@@ -6,10 +6,8 @@
 .home {
   position: relative;
   min-height: 100dvh;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding: clamp(1.5rem, 4vw, 4rem) clamp(1.5rem, 4vw, 4rem) clamp(2rem, 5vw, 4.5rem);
+  padding-inline: clamp(1.5rem, 4vw, 4rem);
+  padding-bottom: clamp(2rem, 5vw, 4.5rem);
   overflow: hidden;
   background: var(--color-bg);
 }
@@ -18,7 +16,7 @@
   position: relative;
   z-index: 2;
   width: min(1200px, 100%);
-  margin-top: clamp(4.5rem, 9vw, 6.8rem);
+  margin-inline: auto;
 }
 
 .brand-logo {
@@ -36,10 +34,13 @@
 
 .hero {
   width: 100%;
+  min-height: 100dvh;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(280px, 430px);
   gap: clamp(1.5rem, 4vw, 5rem);
   align-items: center;
+  padding-top: clamp(5rem, 10vw, 7rem);
+  padding-bottom: clamp(1.5rem, 4vw, 3rem);
 }
 
 .hero__content {
@@ -312,10 +313,6 @@
 }
 
 @media (max-width: 1100px) {
-  .home__inner {
-    margin-top: clamp(4rem, 10vw, 5.2rem);
-  }
-
   .hero {
     grid-template-columns: 1fr;
     justify-items: center;
