@@ -132,17 +132,18 @@
   height: 24px;
   display: grid;
   place-items: center;
-  opacity: 0;
-  transform: translateX(10px) scale(0.86);
-  transition:
-    opacity 200ms ease,
-    transform 260ms ease;
+  overflow: hidden;
 }
 
 .new-survey-button__icon-svg {
   width: 100%;
   height: 100%;
   display: block;
+  clip-path: inset(0 100% 0 0);
+  transform: translateX(-6px);
+  transition:
+    clip-path 260ms ease,
+    transform 260ms ease;
 }
 
 .new-survey-button:hover,
@@ -153,10 +154,10 @@
   outline: none;
 }
 
-.new-survey-button:hover .new-survey-button__icon,
-.new-survey-button:focus-visible .new-survey-button__icon {
-  opacity: 1;
-  transform: translateX(0) scale(1);
+.new-survey-button:hover .new-survey-button__icon-svg,
+.new-survey-button:focus-visible .new-survey-button__icon-svg {
+  clip-path: inset(0 0 0 0);
+  transform: translateX(0);
 }
 
 .hero__visual {
