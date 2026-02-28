@@ -11,13 +11,21 @@
         </button>
       </div>
 
-      <div class="create-survey-input-row">
-        <input class="create-survey-input create-survey-input--short" type="text" aria-label="Option" />
+      <div class="create-survey-input-row create-survey-input-row--split">
+        <div class="create-survey-input-row__left">
+          <input
+            class="create-survey-input create-survey-input--short"
+            type="text"
+            aria-label="Set end date optional"
+          />
 
-        <button class="delete-button" type="button" aria-label="Delete option input">
-          <img class="delete-button__icon" src="/assets/delete-icon.svg" alt="" />
-          <img class="delete-button__icon-hover" src="/assets/delete-icon-hover.svg" alt="" />
-        </button>
+          <button class="delete-button" type="button" aria-label="Delete option input">
+            <img class="delete-button__icon" src="/assets/delete-icon.svg" alt="" />
+            <img class="delete-button__icon-hover" src="/assets/delete-icon-hover.svg" alt="" />
+          </button>
+        </div>
+
+        <img class="category-dropdown" src="/assets/drop-down.svg" alt="Choose category dropdown" />
       </div>
     </div>
   </section>

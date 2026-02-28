@@ -61,6 +61,18 @@
   gap: 10px;
 }
 
+.create-survey-input-row--split {
+  width: min(100%, 794px);
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.create-survey-input-row__left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .create-survey-input {
   width: 429px;
   max-width: 100%;
@@ -135,4 +147,22 @@
 .delete-button:hover .delete-button__icon-hover,
 .delete-button:focus-visible .delete-button__icon-hover {
   opacity: 1;
+}
+
+.category-dropdown {
+  width: 206px;
+  height: 32px;
+  opacity: 1;
+  display: block;
+  flex: 0 0 206px;
+  object-fit: contain;
+}
+
+@media (max-width: 900px) {
+  .create-survey-input-row--split {
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
 }
