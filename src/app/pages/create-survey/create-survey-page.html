@@ -29,8 +29,11 @@
           class="category-dropdown-button"
           type="button"
           aria-label="Choose category dropdown"
+          [attr.aria-expanded]="isCategoryDropdownOpen"
+          [class.is-open]="isCategoryDropdownOpen"
+          (click)="toggleCategoryDropdown()"
         >
-          <img class="category-dropdown" src="/assets/drop-down.svg" alt="" />
+          <span class="category-dropdown__label">Choose categorie</span>
           <span class="category-dropdown__arrow" aria-hidden="true"></span>
         </button>
       </div>

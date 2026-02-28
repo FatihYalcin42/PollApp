@@ -5,4 +5,10 @@ import { Component } from '@angular/core';
   templateUrl: './create-survey-page.html',
   styleUrl: './create-survey-page.scss',
 })
-export class CreateSurveyPage {}
+export class CreateSurveyPage {
+  protected isCategoryDropdownOpen = false;
+
+  protected toggleCategoryDropdown(): void {
+    this.isCategoryDropdownOpen = !this.isCategoryDropdownOpen;
+  }
+}
