@@ -113,6 +113,7 @@
                   class="delete-button"
                   type="button"
                   [attr.aria-label]="'Delete answer ' + getAnswerLabel(index)"
+                  (click)="removeAnswerField(answerIndex)"
                 >
                   <img class="delete-button__icon" src="/assets/delete-icon.svg" alt="" />
                   <img class="delete-button__icon-hover" src="/assets/delete-icon-hover.svg" alt="" />

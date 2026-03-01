@@ -21,8 +21,16 @@ export class CreateSurveyPage {
       return;
     }
 
-    const nextIndex = this.answerFieldIndexes.length;
+    const nextIndex = this.answerFieldIndexes.length
+      ? Math.max(...this.answerFieldIndexes) + 1
+      : 0;
     this.answerFieldIndexes = [...this.answerFieldIndexes, nextIndex];
+  }
+
+  protected removeAnswerField(answerFieldIndex: number): void {
+    this.answerFieldIndexes = this.answerFieldIndexes.filter(
+      (index) => index !== answerFieldIndex,
+    );
   }
 
   protected getAnswerLabel(index: number): string {
