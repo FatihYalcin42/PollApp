@@ -12,62 +12,74 @@
       </button>
     </div>
 
-    <section class="single-survey-surface" aria-label="Single survey surface">
-      <span class="single-survey-status-badge">Published</span>
+    <div class="single-survey-layout__content">
+      <section class="single-survey-surface" aria-label="Single survey surface">
+        <span class="single-survey-status-badge">Published</span>
 
-      <section class="single-survey-question" aria-label="Survey question">
-        <h1 class="single-survey-question__title">{{ questionTitle }}</h1>
-        <p class="single-survey-question__description">
-          We want to create team activities that everyone will enjoy - share your preferences and
-          ideas in our survey to help us plan better experiences together.
-        </p>
-        <div class="single-survey-question-grid">
-          @for (question of questions; track question.id) {
-            <section class="single-survey-question-card" [attr.aria-label]="'Question ' + question.id">
-              <h2 class="single-survey-question__prompt">{{ question.id }}. {{ question.prompt }}</h2>
-              @if (question.hint) {
-                <p class="single-survey-question__hint">{{ question.hint }}</p>
-              }
-
-              <div class="single-survey-options">
-                @for (answer of question.answers; track answer; let answerIndex = $index) {
-                  <button
-                    class="single-survey-option"
-                    type="button"
-                    [class.is-selected]="isAnswerSelected(question.id, answerIndex)"
-                    (click)="toggleAnswer(question.id, answerIndex)"
-                  >
-                    <span class="single-survey-option__control" aria-hidden="true">
-                      <img
-                        class="single-survey-option__checkbox single-survey-option__checkbox--base"
-                        src="/assets/checkbox.svg"
-                        alt=""
-                      />
-                      <img
-                        class="single-survey-option__checkbox single-survey-option__checkbox--hover"
-                        src="/assets/checkbox-hover.svg"
-                        alt=""
-                      />
-                      <img
-                        class="single-survey-option__checkbox single-survey-option__checkbox--selected"
-                        src="/assets/checkbox-click.svg"
-                        alt=""
-                      />
-                    </span>
-                    <span class="single-survey-option__label">{{ getAnswerLabel(answerIndex) }}. {{ answer }}</span>
-                  </button>
+        <section class="single-survey-question" aria-label="Survey question">
+          <h1 class="single-survey-question__title">{{ questionTitle }}</h1>
+          <p class="single-survey-question__description">
+            We want to create team activities that everyone will enjoy - share your preferences and
+            ideas in our survey to help us plan better experiences together.
+          </p>
+          <div class="single-survey-question-grid">
+            @for (question of questions; track question.id) {
+              <section class="single-survey-question-card" [attr.aria-label]="'Question ' + question.id">
+                <h2 class="single-survey-question__prompt">{{ question.id }}. {{ question.prompt }}</h2>
+                @if (question.hint) {
+                  <p class="single-survey-question__hint">{{ question.hint }}</p>
                 }
-              </div>
-            </section>
-          }
+
+                <div class="single-survey-options">
+                  @for (answer of question.answers; track answer; let answerIndex = $index) {
+                    <button
+                      class="single-survey-option"
+                      type="button"
+                      [class.is-selected]="isAnswerSelected(question.id, answerIndex)"
+                      (click)="toggleAnswer(question.id, answerIndex)"
+                    >
+                      <span class="single-survey-option__control" aria-hidden="true">
+                        <img
+                          class="single-survey-option__checkbox single-survey-option__checkbox--base"
+                          src="/assets/checkbox.svg"
+                          alt=""
+                        />
+                        <img
+                          class="single-survey-option__checkbox single-survey-option__checkbox--hover"
+                          src="/assets/checkbox-hover.svg"
+                          alt=""
+                        />
+                        <img
+                          class="single-survey-option__checkbox single-survey-option__checkbox--selected"
+                          src="/assets/checkbox-click.svg"
+                          alt=""
+                        />
+                      </span>
+                      <span class="single-survey-option__label">{{ getAnswerLabel(answerIndex) }}. {{ answer }}</span>
+                    </button>
+                  }
+                </div>
+              </section>
+            }
+          </div>
+        </section>
+
+        <div class="single-survey-surface__actions">
+          <button class="single-survey-complete-button" type="button" aria-label="Complete survey">
+            Complete survey
+          </button>
         </div>
       </section>
 
-      <div class="single-survey-surface__actions">
-        <button class="single-survey-complete-button" type="button" aria-label="Complete survey">
-          Complete survey
-        </button>
-      </div>
-    </section>
+      <aside class="single-survey-results" aria-label="Survey results">
+        <h2 class="single-survey-results__title">
+          Survey results <span class="single-survey-results__live">LIVE</span>
+        </h2>
+        <p class="single-survey-results__description">
+          Results will be shown here after participants complete the survey.
+        </p>
+        <p class="single-survey-results__empty">There are no answears yet.</p>
+      </aside>
+    </div>
   </section>
 </main>
