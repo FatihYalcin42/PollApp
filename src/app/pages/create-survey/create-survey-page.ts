@@ -1,6 +1,8 @@
 import { Component, HostListener } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
+type RemovableInput = 'surveyName' | 'endDate' | 'description' | 'question';
+
 @Component({
   selector: 'app-create-survey-page',
   imports: [RouterLink],
@@ -9,6 +11,12 @@ import { RouterLink } from '@angular/router';
 })
 export class CreateSurveyPage {
   protected isCategoryDropdownOpen = false;
+  protected visibleInputs: Record<RemovableInput, boolean> = {
+    surveyName: true,
+    endDate: true,
+    description: true,
+    question: true,
+  };
   protected selectedCategory = 'Choose categorie';
   protected readonly categories = [
     'Team Activities',
@@ -35,6 +43,10 @@ export class CreateSurveyPage {
   protected selectCategory(category: string): void {
     this.selectedCategory = category;
     this.isCategoryDropdownOpen = false;
+  }
+
+  protected removeInput(input: RemovableInput): void {
+    this.visibleInputs[input] = false;
   }
 
   protected addAnswerField(): void {

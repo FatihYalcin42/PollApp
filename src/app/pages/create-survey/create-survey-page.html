@@ -15,14 +15,21 @@
         <div class="create-survey-inputs">
           <div class="create-survey-input-group">
             <label class="create-survey-field-title" for="survey-name-input">Survey name</label>
-            <div class="create-survey-input-row">
-              <input class="create-survey-input" id="survey-name-input" type="text" aria-label="Survey title" />
+            @if (visibleInputs.surveyName) {
+              <div class="create-survey-input-row">
+                <input class="create-survey-input" id="survey-name-input" type="text" aria-label="Survey title" />
 
-              <button class="delete-button" type="button" aria-label="Delete survey input">
-                <img class="delete-button__icon" src="/assets/delete-icon.svg" alt="" />
-                <img class="delete-button__icon-hover" src="/assets/delete-icon-hover.svg" alt="" />
-              </button>
-            </div>
+                <button
+                  class="delete-button"
+                  type="button"
+                  aria-label="Delete survey input"
+                  (click)="removeInput('surveyName')"
+                >
+                  <img class="delete-button__icon" src="/assets/delete-icon.svg" alt="" />
+                  <img class="delete-button__icon-hover" src="/assets/delete-icon-hover.svg" alt="" />
+                </button>
+              </div>
+            }
           </div>
 
           <div class="create-survey-input-group create-survey-input-group--split">
@@ -30,19 +37,26 @@
               Set end date <span class="create-survey-field-title-optional">(optional)</span>
             </label>
             <div class="create-survey-input-row create-survey-input-row--split">
-              <div class="create-survey-input-row__left">
-                <input
-                  class="create-survey-input create-survey-input--short"
-                  id="survey-end-date-input"
-                  type="text"
-                  aria-label="Set end date optional"
-                />
+              @if (visibleInputs.endDate) {
+                <div class="create-survey-input-row__left">
+                  <input
+                    class="create-survey-input create-survey-input--short"
+                    id="survey-end-date-input"
+                    type="text"
+                    aria-label="Set end date optional"
+                  />
 
-                <button class="delete-button" type="button" aria-label="Delete option input">
-                  <img class="delete-button__icon" src="/assets/delete-icon.svg" alt="" />
-                  <img class="delete-button__icon-hover" src="/assets/delete-icon-hover.svg" alt="" />
-                </button>
-              </div>
+                  <button
+                    class="delete-button"
+                    type="button"
+                    aria-label="Delete option input"
+                    (click)="removeInput('endDate')"
+                  >
+                    <img class="delete-button__icon" src="/assets/delete-icon.svg" alt="" />
+                    <img class="delete-button__icon-hover" src="/assets/delete-icon-hover.svg" alt="" />
+                  </button>
+                </div>
+              }
 
               <div class="category-dropdown">
                 <button
@@ -80,13 +94,20 @@
           <h2 class="description-block__title">
             Describing text <span class="description-block__title-optional">(optional)</span>
           </h2>
-          <div class="description-block__input-row">
-            <textarea class="description-block__input" aria-label="Describing text optional"></textarea>
-            <button class="delete-button description-block__delete" type="button" aria-label="Delete description text">
-              <img class="delete-button__icon" src="/assets/delete-icon.svg" alt="" />
-              <img class="delete-button__icon-hover" src="/assets/delete-icon-hover.svg" alt="" />
-            </button>
-          </div>
+          @if (visibleInputs.description) {
+            <div class="description-block__input-row">
+              <textarea class="description-block__input" aria-label="Describing text optional"></textarea>
+              <button
+                class="delete-button description-block__delete"
+                type="button"
+                aria-label="Delete description text"
+                (click)="removeInput('description')"
+              >
+                <img class="delete-button__icon" src="/assets/delete-icon.svg" alt="" />
+                <img class="delete-button__icon-hover" src="/assets/delete-icon-hover.svg" alt="" />
+              </button>
+            </div>
+          }
         </section>
       </div>
 
@@ -94,14 +115,21 @@
         <h2 class="question-block__title">1. Question</h2>
 
         <div class="question-block__row">
-          <div class="question-block__input-wrap">
-            <button class="delete-button question-block__delete" type="button" aria-label="Delete question">
-              <img class="delete-button__icon" src="/assets/delete-icon.svg" alt="" />
-              <img class="delete-button__icon-hover" src="/assets/delete-icon-hover.svg" alt="" />
-            </button>
+          @if (visibleInputs.question) {
+            <div class="question-block__input-wrap">
+              <button
+                class="delete-button question-block__delete"
+                type="button"
+                aria-label="Delete question"
+                (click)="removeInput('question')"
+              >
+                <img class="delete-button__icon" src="/assets/delete-icon.svg" alt="" />
+                <img class="delete-button__icon-hover" src="/assets/delete-icon-hover.svg" alt="" />
+              </button>
 
-            <input class="create-survey-input question-block__input" type="text" aria-label="Question text" />
-          </div>
+              <input class="create-survey-input question-block__input" type="text" aria-label="Question text" />
+            </div>
+          }
 
           <button class="add-question-button" type="button" aria-label="Add new question">
             <span class="add-question-button__text">Add new question</span>
