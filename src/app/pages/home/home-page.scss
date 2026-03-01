@@ -279,11 +279,44 @@
   opacity: 1;
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
   gap: 10px;
   padding: 40px 18px;
   background: #faf5fe;
   border: 0;
+  text-align: left;
+  cursor: pointer;
   border-top-right-radius: 80px;
+  color: #221227;
+}
+
+.highlight-card__category {
+  font-family: 'Mulish', var(--font-body);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1;
+  color: #35273a;
+}
+
+.highlight-card__title {
+  font-family: 'Mulish', var(--font-body);
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1.12;
+  color: #221227;
+}
+
+.highlight-card__meta {
+  margin-top: auto;
+  padding: 4px 8px;
+  border-radius: 3px;
+  background: #ffcfa1;
+  font-family: 'Mulish', var(--font-body);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1;
+  color: #35273a;
 }
 
 .list-cards {

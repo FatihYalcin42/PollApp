@@ -43,9 +43,15 @@
         <h3 class="surveys__ending">Ending soon surveys</h3>
 
         <div class="highlight-cards" aria-label="Ending soon survey cards">
-          <article class="highlight-card" aria-hidden="true"></article>
-          <article class="highlight-card" aria-hidden="true"></article>
-          <article class="highlight-card" aria-hidden="true"></article>
+          @for (survey of endingSoonSurveys; track $index) {
+            <button class="highlight-card" type="button" [routerLink]="['/single-survey']">
+              <span class="highlight-card__category">{{ survey.category }}</span>
+              <span class="highlight-card__title">{{ survey.title }}</span>
+              <span class="highlight-card__meta">
+                Ends in {{ survey.daysLeft }} Day{{ survey.daysLeft === 1 ? '' : 's' }}
+              </span>
+            </button>
+          }
         </div>
 
         <div class="list-cards" aria-label="Survey list cards">
@@ -53,7 +59,9 @@
             <button class="list-card" type="button" [routerLink]="['/single-survey']">
               <span class="list-card__category">{{ survey.category }}</span>
               <span class="list-card__title">{{ survey.title }}</span>
-              <span class="list-card__meta">{{ survey.endsIn }}</span>
+              <span class="list-card__meta">
+                Ends in {{ survey.daysLeft }} Day{{ survey.daysLeft === 1 ? '' : 's' }}
+              </span>
             </button>
           }
         </div>
