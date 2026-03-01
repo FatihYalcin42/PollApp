@@ -1,5 +1,7 @@
 import { Component, HostListener } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+
+const SURVEY_SETTINGS_KEY = 'pollapp:survey-settings';
 
 @Component({
   selector: 'app-create-survey-page',
@@ -9,6 +11,7 @@ import { RouterLink } from '@angular/router';
 })
 export class CreateSurveyPage {
   protected isCategoryDropdownOpen = false;
+  protected allowMultipleAnswers = false;
   protected selectedCategory = 'Choose categorie';
   protected readonly categories = [
     'Team Activities',
@@ -20,6 +23,10 @@ export class CreateSurveyPage {
   ];
   protected readonly maxAnswerFields = 6;
   protected answerFieldIndexes = [0, 1];
+
+  constructor(private readonly router: Router) {
+    this.loadSurveySettings();
+  }
 
   protected toggleCategoryDropdown(): void {
     this.isCategoryDropdownOpen = !this.isCategoryDropdownOpen;
@@ -41,6 +48,12 @@ export class CreateSurveyPage {
     control.value = '';
   }
 
+  protected onAllowMultipleAnswersChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.allowMultipleAnswers = input.checked;
+    this.persistSurveySettings();
+  }
+
   protected addAnswerField(): void {
     if (this.answerFieldIndexes.length >= this.maxAnswerFields) {
       return;
@@ -58,7 +71,30 @@ export class CreateSurveyPage {
     );
   }
 
+  protected publishSurvey(): void {
+    this.persistSurveySettings();
+    void this.router.navigate(['/single-survey']);
+  }
+
   protected getAnswerLabel(index: number): string {
     return String.fromCharCode(65 + index);
+  }
+
+  private loadSurveySettings(): void {
+    try {
+      const raw = localStorage.getItem(SURVEY_SETTINGS_KEY);
+      if (!raw) return;
+      const parsed = JSON.parse(raw) as { allowMultipleAnswers?: boolean };
+      this.allowMultipleAnswers = !!parsed.allowMultipleAnswers;
+    } catch {
+      this.allowMultipleAnswers = false;
+    }
+  }
+
+  private persistSurveySettings(): void {
+    localStorage.setItem(
+      SURVEY_SETTINGS_KEY,
+      JSON.stringify({ allowMultipleAnswers: this.allowMultipleAnswers }),
+    );
   }
 }

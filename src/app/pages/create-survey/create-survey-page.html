@@ -145,7 +145,13 @@
             <h3 class="answers-block__title">Answers</h3>
 
             <label class="answers-toggle" for="allow-multiple-answers">
-              <input class="answers-toggle__input" id="allow-multiple-answers" type="checkbox" />
+              <input
+                class="answers-toggle__input"
+                id="allow-multiple-answers"
+                type="checkbox"
+                [checked]="allowMultipleAnswers"
+                (change)="onAllowMultipleAnswersChange($event)"
+              />
               <span class="answers-toggle__checkbox" aria-hidden="true"></span>
               <span class="answers-toggle__text">Allow multiple answers.</span>
             </label>
@@ -192,7 +198,12 @@
     </div>
 
     <div class="create-survey-footer">
-      <button class="create-survey-submit-button" type="button" aria-label="Publish survey">
+      <button
+        class="create-survey-submit-button"
+        type="button"
+        aria-label="Publish survey"
+        (click)="publishSurvey()"
+      >
         <span class="create-survey-submit-button__text">Publish</span>
         <img class="create-survey-submit-button__icon" src="/assets/check.svg" alt="" />
       </button>
