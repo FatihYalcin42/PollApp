@@ -116,6 +116,20 @@
   margin-top: 16px;
 }
 
+.single-survey-question__category {
+  margin: 0;
+  width: 100%;
+  box-sizing: border-box;
+  padding-inline: 12px;
+  text-align: right;
+  font-family: 'Mulish', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1;
+  letter-spacing: 0;
+  color: #35273a;
+}
+
 .single-survey-question__title {
   margin: 0;
   width: 100%;
