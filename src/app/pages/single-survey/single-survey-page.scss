@@ -116,6 +116,17 @@
   color: #35273a;
 }
 
+.single-survey-question-grid {
+  width: min(460px, 100%);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 20px;
+}
+
+.single-survey-question-grid .single-survey-question__prompt {
+  margin: 0;
+}
+
 .single-survey-options {
   width: min(460px, 100%);
   display: flex;
@@ -196,6 +207,10 @@
 }
 
 @media (max-width: 900px) {
+  .single-survey-question-grid {
+    grid-template-columns: 1fr;
+  }
+
   .single-survey-surface {
     min-height: 855px;
     height: auto;

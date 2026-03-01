@@ -11,8 +11,14 @@
           We want to create team activities that everyone will enjoy - share your preferences and
           ideas in our survey to help us plan better experiences together.
         </p>
-        <h2 class="single-survey-question__prompt">Which date would work best for you?</h2>
+        <h2 class="single-survey-question__prompt">1. Which date would work best for you?</h2>
         <p class="single-survey-question__hint">More than one answers are possible.</p>
+
+        <div class="single-survey-question-grid" aria-label="Additional questions">
+          <h3 class="single-survey-question__prompt">2. Choose the activities you prefer</h3>
+          <h3 class="single-survey-question__prompt">3. What's most important to you in a team event?</h3>
+          <h3 class="single-survey-question__prompt">4. How long would you prefer the event to last?</h3>
+        </div>
 
         <div class="single-survey-options">
           @for (answer of answers; track answer.id) {
