@@ -53,6 +53,16 @@ export class CreateSurveyPage {
     this.allowMultipleAnswers = input.checked;
   }
 
+  protected limitInputLength(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    input.value = input.value.slice(0, 40);
+  }
+
+  protected limitDescriptionLength(event: Event): void {
+    const textarea = event.target as HTMLTextAreaElement;
+    textarea.value = textarea.value.slice(0, 160);
+  }
+
   protected addAnswerField(): void {
     if (this.answerFieldIndexes.length >= this.maxAnswerFields) {
       return;
