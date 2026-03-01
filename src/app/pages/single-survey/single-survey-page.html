@@ -23,9 +23,23 @@
               (click)="toggleAnswer(answer.id)"
             >
               <span class="single-survey-option__control" aria-hidden="true">
-                {{ allowMultipleAnswers ? (isAnswerSelected(answer.id) ? '☑' : '☐') : (isAnswerSelected(answer.id) ? '◉' : '◯') }}
+                <img
+                  class="single-survey-option__checkbox single-survey-option__checkbox--base"
+                  src="/assets/checkbox.svg"
+                  alt=""
+                />
+                <img
+                  class="single-survey-option__checkbox single-survey-option__checkbox--hover"
+                  src="/assets/checkbox-hover.svg"
+                  alt=""
+                />
+                <img
+                  class="single-survey-option__checkbox single-survey-option__checkbox--selected"
+                  src="/assets/checkbox-click.svg"
+                  alt=""
+                />
               </span>
-              <span>{{ answer.label }}</span>
+              <span class="single-survey-option__label">{{ answer.label }}</span>
             </button>
           }
         </div>

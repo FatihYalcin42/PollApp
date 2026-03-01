@@ -146,9 +146,48 @@
 }
 
 .single-survey-option__control {
+  position: relative;
   width: 20px;
+  height: 20px;
   display: inline-flex;
-  justify-content: center;
+  flex: 0 0 20px;
+}
+
+.single-survey-option__checkbox {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  opacity: 0;
+  transition: opacity 150ms ease;
+}
+
+.single-survey-option__checkbox--base {
+  opacity: 1;
+}
+
+.single-survey-option:not(.is-selected):hover .single-survey-option__checkbox--base,
+.single-survey-option:not(.is-selected):focus-visible .single-survey-option__checkbox--base {
+  opacity: 0;
+}
+
+.single-survey-option:not(.is-selected):hover .single-survey-option__checkbox--hover,
+.single-survey-option:not(.is-selected):focus-visible .single-survey-option__checkbox--hover {
+  opacity: 1;
+}
+
+.single-survey-option.is-selected .single-survey-option__checkbox--base,
+.single-survey-option.is-selected .single-survey-option__checkbox--hover {
+  opacity: 0;
+}
+
+.single-survey-option.is-selected .single-survey-option__checkbox--selected {
+  opacity: 1;
+}
+
+.single-survey-option__label {
+  line-height: 1;
 }
 
 .single-survey-option.is-selected {
