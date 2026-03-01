@@ -557,6 +557,13 @@
   overflow: visible;
 }
 
+.questions-grid__single-action {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding-top: 64px;
+}
+
 .question-block {
   width: 100%;
   display: flex;
@@ -885,6 +892,11 @@
 
   .questions-grid {
     grid-template-columns: 1fr;
+  }
+
+  .questions-grid__single-action {
+    justify-content: flex-start;
+    padding-top: 0;
   }
 
   .answers-block__footer {
