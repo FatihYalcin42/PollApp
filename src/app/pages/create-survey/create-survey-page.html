@@ -204,16 +204,18 @@
           }
         </div>
 
-        <button
-          class="add-question-button"
-          type="button"
-          aria-label="Add new question"
-          [disabled]="questions.length >= maxQuestions"
-          (click)="addQuestion()"
-        >
-          <span class="add-question-button__text">Add new question</span>
-          <img class="add-question-button__icon" src="/assets/add_circle-white.svg" alt="" />
-        </button>
+        <div class="questions-section__actions">
+          <button
+            class="add-question-button"
+            type="button"
+            aria-label="Add new question"
+            [disabled]="questions.length >= maxQuestions"
+            (click)="addQuestion()"
+          >
+            <span class="add-question-button__text">Add new question</span>
+            <img class="add-question-button__icon" src="/assets/add_circle-white.svg" alt="" />
+          </button>
+        </div>
       </section>
     </div>
 

@@ -6,7 +6,6 @@
 
 .create-survey-page {
   min-height: 100dvh;
-  height: 100dvh;
   display: flex;
   align-items: flex-start;
   justify-content: flex-start;
@@ -15,14 +14,13 @@
   padding-bottom: clamp(1rem, 4vw, 2.25rem);
   padding-left: clamp(1rem, 8vw, 109px);
   background: #ffffff;
-  overflow: hidden;
+  overflow-x: auto;
 }
 
 .create-survey-canvas {
   width: min(1166px, 100%);
   max-width: 1166px;
   min-height: clamp(620px, 82dvh, 844px);
-  max-height: 100%;
   height: auto;
   opacity: 1;
   box-sizing: border-box;
@@ -36,7 +34,6 @@
   border-bottom-right-radius: 5px;
   border-bottom-left-radius: 5px;
   background: #35273a;
-  overflow: hidden;
 }
 
 .create-survey-title {
@@ -142,8 +139,6 @@
   border-bottom-right-radius: 5px;
   border-bottom-left-radius: 5px;
   background: #8e709929;
-  overflow-x: hidden;
-  overflow-y: auto;
 }
 
 .create-survey-footer {
@@ -545,6 +540,14 @@
   min-height: 0;
 }
 
+.questions-section__actions {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  margin-top: 4px;
+}
+
 .questions-grid {
   width: 100%;
   min-height: 0;
@@ -910,7 +913,6 @@
   }
 
   .create-survey-page {
-    height: auto;
     overflow: auto;
   }
 
