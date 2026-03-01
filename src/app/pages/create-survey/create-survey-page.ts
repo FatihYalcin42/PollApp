@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 @Component({
@@ -23,6 +23,13 @@ export class CreateSurveyPage {
 
   protected toggleCategoryDropdown(): void {
     this.isCategoryDropdownOpen = !this.isCategoryDropdownOpen;
+  }
+
+  @HostListener('document:click', ['$event'])
+  protected closeCategoryDropdownOnOutsideClick(event: MouseEvent): void {
+    if (!this.isCategoryDropdownOpen) return;
+    const target = event.target as HTMLElement | null;
+    if (!target?.closest('.category-dropdown')) this.isCategoryDropdownOpen = false;
   }
 
   protected selectCategory(category: string): void {
