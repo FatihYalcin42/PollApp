@@ -41,17 +41,34 @@
                 </button>
               </div>
 
-              <button
-                class="category-dropdown-button"
-                type="button"
-                aria-label="Choose category dropdown"
-                [attr.aria-expanded]="isCategoryDropdownOpen"
-                [class.is-open]="isCategoryDropdownOpen"
-                (click)="toggleCategoryDropdown()"
-              >
-                <span class="category-dropdown__label">Choose categorie</span>
-                <span class="category-dropdown__arrow" aria-hidden="true"></span>
-              </button>
+              <div class="category-dropdown">
+                <button
+                  class="category-dropdown-button"
+                  type="button"
+                  aria-label="Choose category dropdown"
+                  [attr.aria-expanded]="isCategoryDropdownOpen"
+                  [class.is-open]="isCategoryDropdownOpen"
+                  (click)="toggleCategoryDropdown()"
+                >
+                  <span class="category-dropdown__label">{{ selectedCategory }}</span>
+                  <span class="category-dropdown__arrow" aria-hidden="true"></span>
+                </button>
+
+                @if (isCategoryDropdownOpen) {
+                  <div class="category-dropdown-menu" role="menu" aria-label="Category options">
+                    @for (category of categories; track category) {
+                      <button
+                        class="category-dropdown-menu__item"
+                        type="button"
+                        role="menuitem"
+                        (click)="selectCategory(category)"
+                      >
+                        {{ category }}
+                      </button>
+                    }
+                  </div>
+                }
+              </div>
             </div>
           </div>
         </div>

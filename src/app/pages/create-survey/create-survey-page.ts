@@ -9,11 +9,25 @@ import { RouterLink } from '@angular/router';
 })
 export class CreateSurveyPage {
   protected isCategoryDropdownOpen = false;
+  protected selectedCategory = 'Choose categorie';
+  protected readonly categories = [
+    'Team Activities',
+    'Health & Wellness',
+    'Gaming & Entertainment',
+    'Education & Learning',
+    'Lifestyle & Preferences',
+    'Technology & Innovation',
+  ];
   protected readonly maxAnswerFields = 6;
   protected answerFieldIndexes = [0, 1];
 
   protected toggleCategoryDropdown(): void {
     this.isCategoryDropdownOpen = !this.isCategoryDropdownOpen;
+  }
+
+  protected selectCategory(category: string): void {
+    this.selectedCategory = category;
+    this.isCategoryDropdownOpen = false;
   }
 
   protected addAnswerField(): void {
