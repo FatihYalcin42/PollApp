@@ -2,6 +2,7 @@ import { Component, HostListener } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 
 const SURVEY_SETTINGS_KEY = 'pollapp:survey-settings';
+type SurveySettings = { allowMultipleAnswers?: boolean; surveyTitle?: string };
 type QuestionItem = {
   id: number;
   renderVersion: number;
@@ -18,6 +19,7 @@ type QuestionItem = {
 export class CreateSurveyPage {
   protected isCategoryDropdownOpen = false;
   protected selectedCategory = 'Choose categorie';
+  protected surveyTitle = '';
   protected readonly categories = [
     'Team Activities',
     'Health & Wellness',
@@ -127,7 +129,10 @@ export class CreateSurveyPage {
   }
 
   protected publishSurvey(): void {
-    this.persistSurveySettings(this.questions[0]?.allowMultipleAnswers ?? false);
+    this.persistSurveySettings(
+      this.questions[0]?.allowMultipleAnswers ?? false,
+      this.surveyTitle,
+    );
     void this.router.navigate(['/single-survey']);
   }
 
@@ -135,21 +140,26 @@ export class CreateSurveyPage {
     return String.fromCharCode(65 + index);
   }
 
+  protected updateSurveyTitle(value: string): void {
+    this.surveyTitle = value.trim();
+  }
+
   private readAllowMultipleAnswers(): boolean {
     try {
       const raw = localStorage.getItem(SURVEY_SETTINGS_KEY);
       if (!raw) return false;
-      const parsed = JSON.parse(raw) as { allowMultipleAnswers?: boolean };
+      const parsed = JSON.parse(raw) as SurveySettings;
       return !!parsed.allowMultipleAnswers;
     } catch {
       return false;
     }
   }
 
-  private persistSurveySettings(allowMultipleAnswers: boolean): void {
+  private persistSurveySettings(allowMultipleAnswers: boolean, surveyTitle: string): void {
+    const title = surveyTitle || 'Untitled survey';
     localStorage.setItem(
       SURVEY_SETTINGS_KEY,
-      JSON.stringify({ allowMultipleAnswers }),
+      JSON.stringify({ allowMultipleAnswers, surveyTitle: title }),
     );
   }
 }

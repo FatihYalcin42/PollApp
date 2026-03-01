@@ -1,28 +1,32 @@
 <main class="single-survey-page">
-  <section class="single-survey-surface" aria-label="Single survey surface">
+  <section class="single-survey-layout">
     <img class="single-survey-logo" src="/assets/logo-purple.svg" alt="Poll App logo" />
 
-    <section class="single-survey-question" aria-label="Survey question">
-      <h1 class="single-survey-question__title">{{ questionTitle }}</h1>
-      <p class="single-survey-question__mode">
-        {{ allowMultipleAnswers ? 'Multiple answers are enabled.' : 'Only one answer is allowed.' }}
-      </p>
+    <section class="single-survey-surface" aria-label="Single survey surface">
+      <span class="single-survey-status-badge">Published</span>
 
-      <div class="single-survey-options">
-        @for (answer of answers; track answer.id) {
-          <button
-            class="single-survey-option"
-            type="button"
-            [class.is-selected]="isAnswerSelected(answer.id)"
-            (click)="toggleAnswer(answer.id)"
-          >
-            <span class="single-survey-option__control" aria-hidden="true">
-              {{ allowMultipleAnswers ? (isAnswerSelected(answer.id) ? '☑' : '☐') : (isAnswerSelected(answer.id) ? '◉' : '◯') }}
-            </span>
-            <span>{{ answer.label }}</span>
-          </button>
-        }
-      </div>
+      <section class="single-survey-question" aria-label="Survey question">
+        <h1 class="single-survey-question__title">{{ questionTitle }}</h1>
+        <p class="single-survey-question__mode">
+          {{ allowMultipleAnswers ? 'Multiple answers are enabled.' : 'Only one answer is allowed.' }}
+        </p>
+
+        <div class="single-survey-options">
+          @for (answer of answers; track answer.id) {
+            <button
+              class="single-survey-option"
+              type="button"
+              [class.is-selected]="isAnswerSelected(answer.id)"
+              (click)="toggleAnswer(answer.id)"
+            >
+              <span class="single-survey-option__control" aria-hidden="true">
+                {{ allowMultipleAnswers ? (isAnswerSelected(answer.id) ? '☑' : '☐') : (isAnswerSelected(answer.id) ? '◉' : '◯') }}
+              </span>
+              <span>{{ answer.label }}</span>
+            </button>
+          }
+        </div>
+      </section>
     </section>
   </section>
 </main>

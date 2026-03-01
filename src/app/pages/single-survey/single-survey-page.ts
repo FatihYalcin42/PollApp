@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 
 const SURVEY_SETTINGS_KEY = 'pollapp:survey-settings';
+type SurveySettings = { allowMultipleAnswers?: boolean; surveyTitle?: string };
 
 type SurveyAnswer = { id: number; label: string };
 
@@ -12,7 +13,7 @@ type SurveyAnswer = { id: number; label: string };
 export class SingleSurveyPage {
   protected allowMultipleAnswers = false;
   protected selectedAnswerIds: number[] = [];
-  protected readonly questionTitle = 'Which date would work best for you?';
+  protected questionTitle = 'Untitled survey';
   protected readonly answers: SurveyAnswer[] = [
     { id: 1, label: 'Monday' },
     { id: 2, label: 'Wednesday' },
@@ -21,7 +22,9 @@ export class SingleSurveyPage {
   ];
 
   constructor() {
-    this.allowMultipleAnswers = this.readAllowMultipleAnswers();
+    const settings = this.readSurveySettings();
+    this.allowMultipleAnswers = !!settings.allowMultipleAnswers;
+    this.questionTitle = settings.surveyTitle?.trim() || 'Untitled survey';
   }
 
   protected toggleAnswer(answerId: number): void {
@@ -39,14 +42,13 @@ export class SingleSurveyPage {
     return this.selectedAnswerIds.includes(answerId);
   }
 
-  private readAllowMultipleAnswers(): boolean {
+  private readSurveySettings(): SurveySettings {
     try {
       const raw = localStorage.getItem(SURVEY_SETTINGS_KEY);
-      if (!raw) return false;
-      const parsed = JSON.parse(raw) as { allowMultipleAnswers?: boolean };
-      return !!parsed.allowMultipleAnswers;
+      if (!raw) return {};
+      return JSON.parse(raw) as SurveySettings;
     } catch {
-      return false;
+      return {};
     }
   }
 }

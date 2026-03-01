@@ -21,15 +21,16 @@
                 class="create-survey-input"
                 id="survey-name-input"
                 type="text"
+                [value]="surveyTitle"
                 aria-label="Survey title"
-                (input)="limitInputLength($event)"
+                (input)="limitInputLength($event); updateSurveyTitle(surveyNameInput.value)"
               />
 
               <button
                 class="delete-button"
                 type="button"
                 aria-label="Clear survey input"
-                (click)="clearField(surveyNameInput)"
+                (click)="clearField(surveyNameInput); updateSurveyTitle('')"
               >
                 <img class="delete-button__icon" src="/assets/delete-icon.svg" alt="" />
                 <img class="delete-button__icon-hover" src="/assets/delete-icon-hover.svg" alt="" />
