@@ -1,9 +1,12 @@
 import { Component } from '@angular/core';
 
-const SURVEY_SETTINGS_KEY = 'pollapp:survey-settings';
-type SurveySettings = { allowMultipleAnswers?: boolean };
-
-type SurveyAnswer = { id: number; label: string };
+type SurveyQuestion = {
+  id: number;
+  prompt: string;
+  hint: string;
+  allowMultiple: boolean;
+  answers: string[];
+};
 
 @Component({
   selector: 'app-single-survey-page',
@@ -11,43 +14,62 @@ type SurveyAnswer = { id: number; label: string };
   styleUrl: './single-survey-page.scss',
 })
 export class SingleSurveyPage {
-  protected allowMultipleAnswers = false;
-  protected selectedAnswerIds: number[] = [];
+  protected selectedAnswers: Record<number, number[]> = {};
   protected readonly questionTitle = "Let's Plan the Next Team Event Together";
-  protected readonly answers: SurveyAnswer[] = [
-    { id: 1, label: 'Monday' },
-    { id: 2, label: 'Wednesday' },
-    { id: 3, label: 'Friday' },
-    { id: 4, label: 'Sunday' },
+  protected readonly questions: SurveyQuestion[] = [
+    {
+      id: 1,
+      prompt: 'Which date would work best for you?',
+      hint: 'More than one answers are possible.',
+      allowMultiple: true,
+      answers: ['19.09.2026, Friday', '10.10.2026, Friday', '11.10.2026, Saturday', '31.10.2026, Friday'],
+    },
+    {
+      id: 2,
+      prompt: 'Choose the activities you prefer',
+      hint: 'More than one answers are possible.',
+      allowMultiple: true,
+      answers: [
+        'Outdoor adventure like kayaking',
+        'Office Costume Party',
+        'Bowling, mini-golf, volleyball',
+        'Beach party, Music & cocktails',
+        'Escape room',
+      ],
+    },
+    {
+      id: 3,
+      prompt: "What's most important to you in a team event?",
+      hint: '',
+      allowMultiple: false,
+      answers: ['Team bonding', 'Food and drinks', 'Trying something new', 'Keeping it low-key and stress-free'],
+    },
+    {
+      id: 4,
+      prompt: 'How long would you prefer the event to last?',
+      hint: '',
+      allowMultiple: false,
+      answers: ['Half a day', 'Full day', 'Evening only'],
+    },
   ];
 
-  constructor() {
-    this.allowMultipleAnswers = this.readAllowMultipleAnswers();
+  protected toggleAnswer(questionId: number, answerIndex: number): void {
+    const question = this.questions.find((item) => item.id === questionId);
+    if (!question) return;
+    const current = this.selectedAnswers[questionId] ?? [];
+    const next = question.allowMultiple
+      ? current.includes(answerIndex)
+        ? current.filter((id) => id !== answerIndex)
+        : [...current, answerIndex]
+      : current[0] === answerIndex ? [] : [answerIndex];
+    this.selectedAnswers = { ...this.selectedAnswers, [questionId]: next };
   }
 
-  protected toggleAnswer(answerId: number): void {
-    if (this.allowMultipleAnswers) {
-      const ids = new Set(this.selectedAnswerIds);
-      ids.has(answerId) ? ids.delete(answerId) : ids.add(answerId);
-      this.selectedAnswerIds = [...ids];
-      return;
-    }
-
-    this.selectedAnswerIds = this.selectedAnswerIds[0] === answerId ? [] : [answerId];
+  protected isAnswerSelected(questionId: number, answerIndex: number): boolean {
+    return (this.selectedAnswers[questionId] ?? []).includes(answerIndex);
   }
 
-  protected isAnswerSelected(answerId: number): boolean {
-    return this.selectedAnswerIds.includes(answerId);
-  }
-
-  private readAllowMultipleAnswers(): boolean {
-    try {
-      const raw = localStorage.getItem(SURVEY_SETTINGS_KEY);
-      if (!raw) return false;
-      const parsed = JSON.parse(raw) as SurveySettings;
-      return !!parsed.allowMultipleAnswers;
-    } catch {
-      return false;
-    }
+  protected getAnswerLabel(index: number): string {
+    return String.fromCharCode(65 + index);
   }
 }
