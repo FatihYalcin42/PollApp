@@ -119,91 +119,101 @@
         </section>
       </div>
 
-      <section class="question-block" aria-label="Question block">
-        <h2 class="question-block__title">1. Question</h2>
+      <section class="questions-section" aria-label="Question blocks">
+        <div class="questions-grid">
+          @for (question of questions; track question.id; let questionNumber = $index) {
+            <section class="question-block" [attr.aria-label]="'Question ' + (questionNumber + 1)">
+              <h2 class="question-block__title">{{ questionNumber + 1 }}. Question</h2>
 
-        <div class="question-block__row">
-          <div class="question-block__input-wrap">
-            <button
-              class="delete-button question-block__delete"
-              type="button"
-              aria-label="Clear question"
-              (click)="clearField(questionInput)"
-            >
-              <img class="delete-button__icon" src="/assets/delete-icon.svg" alt="" />
-              <img class="delete-button__icon-hover" src="/assets/delete-icon-hover.svg" alt="" />
-            </button>
-
-            <input
-              #questionInput
-              class="create-survey-input question-block__input"
-              type="text"
-              aria-label="Question text"
-              (input)="limitInputLength($event)"
-            />
-          </div>
-
-          <button class="add-question-button" type="button" aria-label="Add new question">
-            <span class="add-question-button__text">Add new question</span>
-            <img class="add-question-button__icon" src="/assets/add_circle-white.svg" alt="" />
-          </button>
-        </div>
-
-        <div class="answers-block" aria-label="Answers">
-          <div class="answers-block__header">
-            <h3 class="answers-block__title">Answers</h3>
-
-            <label class="answers-toggle" for="allow-multiple-answers">
-              <input
-                class="answers-toggle__input"
-                id="allow-multiple-answers"
-                type="checkbox"
-                [checked]="allowMultipleAnswers"
-                (change)="onAllowMultipleAnswersChange($event)"
-              />
-              <span class="answers-toggle__checkbox" aria-hidden="true"></span>
-              <span class="answers-toggle__text">Allow multiple answers.</span>
-            </label>
-          </div>
-
-          <div class="answers-block__list" aria-label="Answer inputs list">
-            @for (answerIndex of answerFieldIndexes; track answerIndex; let index = $index) {
-              <div class="answer-row">
-                <span class="answer-row__label">{{ getAnswerLabel(index) }}.</span>
-                <input
-                  class="create-survey-input answer-row__input"
-                  type="text"
-                  [attr.aria-label]="'Answer ' + getAnswerLabel(index)"
-                  (input)="limitInputLength($event)"
-                />
+              <div class="question-block__input-wrap">
                 <button
-                  class="delete-button"
+                  class="delete-button question-block__delete"
                   type="button"
-                  [attr.aria-label]="'Delete answer ' + getAnswerLabel(index)"
-                  (click)="removeAnswerField(answerIndex)"
+                  aria-label="Clear question"
+                  (click)="clearField(questionInput)"
                 >
                   <img class="delete-button__icon" src="/assets/delete-icon.svg" alt="" />
                   <img class="delete-button__icon-hover" src="/assets/delete-icon-hover.svg" alt="" />
                 </button>
+
+                <input
+                  #questionInput
+                  class="create-survey-input question-block__input"
+                  type="text"
+                  aria-label="Question text"
+                  (input)="limitInputLength($event)"
+                />
               </div>
-            }
-          </div>
 
-          <div class="answers-block__footer">
-            <button
-              class="add-answer-button"
-              type="button"
-              aria-label="Add answer"
-              [disabled]="answerFieldIndexes.length >= maxAnswerFields"
-              (click)="addAnswerField()"
-            >
-              <span class="add-answer-button__text">Add answer</span>
-              <img class="add-answer-button__icon" src="/assets/add_circle-white.svg" alt="" />
-            </button>
+              <div class="answers-block" aria-label="Answers">
+                <div class="answers-block__header">
+                  <h3 class="answers-block__title">Answers</h3>
 
-            <p class="add-answer-button__hint">You can add up to 6 answer fields.</p>
-          </div>
+                  <label class="answers-toggle" [attr.for]="'allow-multiple-answers-' + question.id">
+                    <input
+                      class="answers-toggle__input"
+                      [id]="'allow-multiple-answers-' + question.id"
+                      type="checkbox"
+                      [checked]="question.allowMultipleAnswers"
+                      (change)="onAllowMultipleAnswersChange(question.id, $event)"
+                    />
+                    <span class="answers-toggle__checkbox" aria-hidden="true"></span>
+                    <span class="answers-toggle__text">Allow multiple answers.</span>
+                  </label>
+                </div>
+
+                <div class="answers-block__list" aria-label="Answer inputs list">
+                  @for (answerIndex of question.answerFieldIndexes; track answerIndex; let index = $index) {
+                    <div class="answer-row">
+                      <span class="answer-row__label">{{ getAnswerLabel(index) }}.</span>
+                      <input
+                        class="create-survey-input answer-row__input"
+                        type="text"
+                        [attr.aria-label]="'Answer ' + getAnswerLabel(index)"
+                        (input)="limitInputLength($event)"
+                      />
+                      <button
+                        class="delete-button"
+                        type="button"
+                        [attr.aria-label]="'Delete answer ' + getAnswerLabel(index)"
+                        (click)="removeAnswerField(question.id, answerIndex)"
+                      >
+                        <img class="delete-button__icon" src="/assets/delete-icon.svg" alt="" />
+                        <img class="delete-button__icon-hover" src="/assets/delete-icon-hover.svg" alt="" />
+                      </button>
+                    </div>
+                  }
+                </div>
+
+                <div class="answers-block__footer">
+                  <button
+                    class="add-answer-button"
+                    type="button"
+                    aria-label="Add answer"
+                    [disabled]="question.answerFieldIndexes.length >= maxAnswerFields"
+                    (click)="addAnswerField(question.id)"
+                  >
+                    <span class="add-answer-button__text">Add answer</span>
+                    <img class="add-answer-button__icon" src="/assets/add_circle-white.svg" alt="" />
+                  </button>
+
+                  <p class="add-answer-button__hint">You can add up to 6 answer fields.</p>
+                </div>
+              </div>
+            </section>
+          }
         </div>
+
+        <button
+          class="add-question-button"
+          type="button"
+          aria-label="Add new question"
+          [disabled]="questions.length >= maxQuestions"
+          (click)="addQuestion()"
+        >
+          <span class="add-question-button__text">Add new question</span>
+          <img class="add-question-button__icon" src="/assets/add_circle-white.svg" alt="" />
+        </button>
       </section>
     </div>
 

@@ -2,6 +2,7 @@ import { Component, HostListener } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 
 const SURVEY_SETTINGS_KEY = 'pollapp:survey-settings';
+type QuestionItem = { id: number; allowMultipleAnswers: boolean; answerFieldIndexes: number[] };
 
 @Component({
   selector: 'app-create-survey-page',
@@ -11,7 +12,6 @@ const SURVEY_SETTINGS_KEY = 'pollapp:survey-settings';
 })
 export class CreateSurveyPage {
   protected isCategoryDropdownOpen = false;
-  protected allowMultipleAnswers = false;
   protected selectedCategory = 'Choose categorie';
   protected readonly categories = [
     'Team Activities',
@@ -22,10 +22,13 @@ export class CreateSurveyPage {
     'Technology & Innovation',
   ];
   protected readonly maxAnswerFields = 6;
-  protected answerFieldIndexes = [0, 1];
+  protected readonly maxQuestions = 6;
+  protected questions: QuestionItem[] = [
+    { id: 1, allowMultipleAnswers: false, answerFieldIndexes: [0, 1] },
+  ];
 
   constructor(private readonly router: Router) {
-    this.loadSurveySettings();
+    this.questions[0].allowMultipleAnswers = this.readAllowMultipleAnswers();
   }
 
   protected toggleCategoryDropdown(): void {
@@ -48,9 +51,13 @@ export class CreateSurveyPage {
     control.value = '';
   }
 
-  protected onAllowMultipleAnswersChange(event: Event): void {
+  protected onAllowMultipleAnswersChange(questionId: number, event: Event): void {
     const input = event.target as HTMLInputElement;
-    this.allowMultipleAnswers = input.checked;
+    this.questions = this.questions.map((question) =>
+      question.id === questionId
+        ? { ...question, allowMultipleAnswers: input.checked }
+        : question,
+    );
   }
 
   protected limitInputLength(event: Event): void {
@@ -63,25 +70,46 @@ export class CreateSurveyPage {
     textarea.value = textarea.value.slice(0, 160);
   }
 
-  protected addAnswerField(): void {
-    if (this.answerFieldIndexes.length >= this.maxAnswerFields) {
-      return;
-    }
-
-    const nextIndex = this.answerFieldIndexes.length
-      ? Math.max(...this.answerFieldIndexes) + 1
-      : 0;
-    this.answerFieldIndexes = [...this.answerFieldIndexes, nextIndex];
+  protected addQuestion(): void {
+    if (this.questions.length >= this.maxQuestions) return;
+    const nextId = this.questions.length
+      ? Math.max(...this.questions.map((question) => question.id)) + 1
+      : 1;
+    this.questions = [
+      ...this.questions,
+      { id: nextId, allowMultipleAnswers: false, answerFieldIndexes: [0, 1] },
+    ];
   }
 
-  protected removeAnswerField(answerFieldIndex: number): void {
-    this.answerFieldIndexes = this.answerFieldIndexes.filter(
-      (index) => index !== answerFieldIndex,
+  protected addAnswerField(questionId: number): void {
+    this.questions = this.questions.map((question) => {
+      if (question.id !== questionId) return question;
+      if (question.answerFieldIndexes.length >= this.maxAnswerFields) return question;
+      const nextIndex = question.answerFieldIndexes.length
+        ? Math.max(...question.answerFieldIndexes) + 1
+        : 0;
+      return {
+        ...question,
+        answerFieldIndexes: [...question.answerFieldIndexes, nextIndex],
+      };
+    });
+  }
+
+  protected removeAnswerField(questionId: number, answerFieldIndex: number): void {
+    this.questions = this.questions.map((question) =>
+      question.id === questionId
+        ? {
+            ...question,
+            answerFieldIndexes: question.answerFieldIndexes.filter(
+              (index) => index !== answerFieldIndex,
+            ),
+          }
+        : question,
     );
   }
 
   protected publishSurvey(): void {
-    this.persistSurveySettings();
+    this.persistSurveySettings(this.questions[0]?.allowMultipleAnswers ?? false);
     void this.router.navigate(['/single-survey']);
   }
 
@@ -89,21 +117,21 @@ export class CreateSurveyPage {
     return String.fromCharCode(65 + index);
   }
 
-  private loadSurveySettings(): void {
+  private readAllowMultipleAnswers(): boolean {
     try {
       const raw = localStorage.getItem(SURVEY_SETTINGS_KEY);
-      if (!raw) return;
+      if (!raw) return false;
       const parsed = JSON.parse(raw) as { allowMultipleAnswers?: boolean };
-      this.allowMultipleAnswers = !!parsed.allowMultipleAnswers;
+      return !!parsed.allowMultipleAnswers;
     } catch {
-      this.allowMultipleAnswers = false;
+      return false;
     }
   }
 
-  private persistSurveySettings(): void {
+  private persistSurveySettings(allowMultipleAnswers: boolean): void {
     localStorage.setItem(
       SURVEY_SETTINGS_KEY,
-      JSON.stringify({ allowMultipleAnswers: this.allowMultipleAnswers }),
+      JSON.stringify({ allowMultipleAnswers }),
     );
   }
 }
