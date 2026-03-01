@@ -51,7 +51,6 @@ export class CreateSurveyPage {
   protected onAllowMultipleAnswersChange(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.allowMultipleAnswers = input.checked;
-    this.persistSurveySettings();
   }
 
   protected addAnswerField(): void {
