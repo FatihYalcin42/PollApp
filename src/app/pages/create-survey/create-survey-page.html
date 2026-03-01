@@ -100,25 +100,34 @@
             </label>
           </div>
 
-          <div class="answer-row">
-            <span class="answer-row__label">A.</span>
-            <input class="create-survey-input answer-row__input" type="text" aria-label="Answer A" />
-            <button class="delete-button" type="button" aria-label="Delete answer A">
-              <img class="delete-button__icon" src="/assets/delete-icon.svg" alt="" />
-              <img class="delete-button__icon-hover" src="/assets/delete-icon-hover.svg" alt="" />
-            </button>
+          <div class="answers-block__list" aria-label="Answer inputs list">
+            @for (answerIndex of answerFieldIndexes; track answerIndex; let index = $index) {
+              <div class="answer-row">
+                <span class="answer-row__label">{{ getAnswerLabel(index) }}.</span>
+                <input
+                  class="create-survey-input answer-row__input"
+                  type="text"
+                  [attr.aria-label]="'Answer ' + getAnswerLabel(index)"
+                />
+                <button
+                  class="delete-button"
+                  type="button"
+                  [attr.aria-label]="'Delete answer ' + getAnswerLabel(index)"
+                >
+                  <img class="delete-button__icon" src="/assets/delete-icon.svg" alt="" />
+                  <img class="delete-button__icon-hover" src="/assets/delete-icon-hover.svg" alt="" />
+                </button>
+              </div>
+            }
           </div>
 
-          <div class="answer-row">
-            <span class="answer-row__label">B.</span>
-            <input class="create-survey-input answer-row__input" type="text" aria-label="Answer B" />
-            <button class="delete-button" type="button" aria-label="Delete answer B">
-              <img class="delete-button__icon" src="/assets/delete-icon.svg" alt="" />
-              <img class="delete-button__icon-hover" src="/assets/delete-icon-hover.svg" alt="" />
-            </button>
-          </div>
-
-          <button class="add-answer-button" type="button" aria-label="Add answer">
+          <button
+            class="add-answer-button"
+            type="button"
+            aria-label="Add answer"
+            [disabled]="answerFieldIndexes.length >= maxAnswerFields"
+            (click)="addAnswerField()"
+          >
             <span class="add-answer-button__text">Add answer</span>
             <img class="add-answer-button__icon" src="/assets/add_circle-white.svg" alt="" />
           </button>
