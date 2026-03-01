@@ -212,6 +212,44 @@
   color: #221227;
 }
 
+.single-survey-surface__actions {
+  margin-top: auto;
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.single-survey-complete-button {
+  width: 159px;
+  height: 37px;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: #ffe1c2;
+  color: #35273a;
+  font-family: 'Nokora', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1;
+  letter-spacing: 0;
+  cursor: pointer;
+  transition: background-color 160ms ease;
+}
+
+.single-survey-complete-button:hover,
+.single-survey-complete-button:focus-visible {
+  background: #ffcfa1;
+}
+
+.single-survey-complete-button:focus-visible {
+  outline: none;
+}
+
 @media (max-width: 900px) {
   .single-survey-question-grid {
     grid-template-columns: 1fr;
