@@ -301,13 +301,48 @@
   opacity: 1;
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
   gap: 24px;
   padding: 12px 20px;
+  border: 0;
+  text-align: left;
+  cursor: pointer;
   background: #d9d9d914;
   border-top-left-radius: 5px;
   border-top-right-radius: 50px;
   border-bottom-right-radius: 5px;
   border-bottom-left-radius: 5px;
+  color: #fefdff;
+}
+
+.list-card__category {
+  font-family: 'Mulish', var(--font-body);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1;
+  color: #ffcfa1;
+}
+
+.list-card__title {
+  font-family: 'Mulish', var(--font-body);
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1.1;
+  color: #fefdff;
+}
+
+.list-card__meta {
+  margin-top: auto;
+  align-self: flex-end;
+  padding: 4px 8px;
+  border-radius: 3px;
+  background: #ffcfa1;
+  font-family: 'Mulish', var(--font-body);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1;
+  color: #35273a;
 }
 
 @keyframes title-in {
