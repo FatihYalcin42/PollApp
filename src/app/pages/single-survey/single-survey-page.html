@@ -17,14 +17,13 @@
         <span class="single-survey-status-badge">Published</span>
 
       <section class="single-survey-question" aria-label="Survey question">
-        <p class="single-survey-question__category">Categorie: Team activities</p>
-        <h1 class="single-survey-question__title">{{ questionTitle }}</h1>
+        <p class="single-survey-question__category">Categorie: {{ survey.category }}</p>
+        <h1 class="single-survey-question__title">{{ survey.title }}</h1>
         <p class="single-survey-question__description">
-          We want to create team activities that everyone will enjoy - share your preferences and
-            ideas in our survey to help us plan better experiences together.
+          {{ survey.description }}
           </p>
           <div class="single-survey-question-grid">
-            @for (question of questions; track question.id) {
+            @for (question of survey.questions; track question.id) {
               <section class="single-survey-question-card" [attr.aria-label]="'Question ' + question.id">
                 <h2 class="single-survey-question__prompt">{{ question.id }}. {{ question.prompt }}</h2>
                 @if (question.hint) {

@@ -44,7 +44,7 @@
 
         <div class="highlight-cards" aria-label="Ending soon survey cards">
           @for (survey of endingSoonSurveys; track $index) {
-            <button class="highlight-card" type="button" [routerLink]="['/single-survey']">
+            <button class="highlight-card" type="button" [routerLink]="['/single-survey', survey.id]">
               <span class="highlight-card__category">{{ survey.category }}</span>
               <span class="highlight-card__title">{{ survey.title }}</span>
               <span class="highlight-card__meta">
@@ -56,7 +56,7 @@
 
         <div class="list-cards" aria-label="Survey list cards">
           @for (survey of activeSurveys; track $index) {
-            <button class="list-card" type="button" [routerLink]="['/single-survey']">
+            <button class="list-card" type="button" [routerLink]="['/single-survey', survey.id]">
               <span class="list-card__category">{{ survey.category }}</span>
               <span class="list-card__title">{{ survey.title }}</span>
               <span class="list-card__meta">

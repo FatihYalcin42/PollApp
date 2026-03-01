@@ -6,6 +6,7 @@ import { SingleSurveyPage } from './pages/single-survey/single-survey-page';
 export const routes: Routes = [
   { path: '', component: HomePage },
   { path: 'create-survey', component: CreateSurveyPage },
-  { path: 'single-survey', component: SingleSurveyPage },
+  { path: 'single-survey', redirectTo: 'single-survey/1', pathMatch: 'full' },
+  { path: 'single-survey/:id', component: SingleSurveyPage },
   { path: '**', redirectTo: '' },
 ];
