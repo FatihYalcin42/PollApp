@@ -445,7 +445,13 @@
 
 .category-dropdown-menu__item:hover,
 .category-dropdown-menu__item:focus-visible {
-  background: rgb(217 217 217 / 10%);
+  width: 111px;
+  height: 26px;
+  gap: 10px;
+  padding: 4px;
+  border-radius: 6px;
+  background: #f4e9fb;
+  color: #35273a;
   outline: none;
 }
 
