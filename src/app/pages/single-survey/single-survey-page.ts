@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 type SurveyQuestion = {
   id: number;
@@ -10,6 +11,7 @@ type SurveyQuestion = {
 
 @Component({
   selector: 'app-single-survey-page',
+  imports: [RouterLink],
   templateUrl: './single-survey-page.html',
   styleUrl: './single-survey-page.scss',
 })

@@ -3,7 +3,17 @@
     <img class="single-survey-logo" src="/assets/logo-purple.svg" alt="Poll App logo" />
 
     <section class="single-survey-surface" aria-label="Single survey surface">
-      <span class="single-survey-status-badge">Published</span>
+      <div class="single-survey-surface__topbar">
+        <span class="single-survey-status-badge">Published</span>
+        <button
+          class="single-survey-create-button"
+          type="button"
+          aria-label="Create survey"
+          [routerLink]="['/create-survey']"
+        >
+          Create survey
+        </button>
+      </div>
 
       <section class="single-survey-question" aria-label="Survey question">
         <h1 class="single-survey-question__title">{{ questionTitle }}</h1>
