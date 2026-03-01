@@ -156,7 +156,6 @@
               <div class="answer-row">
                 <span class="answer-row__label">{{ getAnswerLabel(index) }}.</span>
                 <input
-                  #answerInput
                   class="create-survey-input answer-row__input"
                   type="text"
                   [attr.aria-label]="'Answer ' + getAnswerLabel(index)"
@@ -164,8 +163,8 @@
                 <button
                   class="delete-button"
                   type="button"
-                  [attr.aria-label]="'Clear answer ' + getAnswerLabel(index)"
-                  (click)="clearField(answerInput)"
+                  [attr.aria-label]="'Delete answer ' + getAnswerLabel(index)"
+                  (click)="removeAnswerField(answerIndex)"
                 >
                   <img class="delete-button__icon" src="/assets/delete-icon.svg" alt="" />
                   <img class="delete-button__icon-hover" src="/assets/delete-icon-hover.svg" alt="" />

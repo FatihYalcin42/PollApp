@@ -52,6 +52,12 @@ export class CreateSurveyPage {
     this.answerFieldIndexes = [...this.answerFieldIndexes, nextIndex];
   }
 
+  protected removeAnswerField(answerFieldIndex: number): void {
+    this.answerFieldIndexes = this.answerFieldIndexes.filter(
+      (index) => index !== answerFieldIndex,
+    );
+  }
+
   protected getAnswerLabel(index: number): string {
     return String.fromCharCode(65 + index);
   }
