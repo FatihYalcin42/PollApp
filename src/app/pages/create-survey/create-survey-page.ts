@@ -2,7 +2,12 @@ import { Component, HostListener } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 
 const SURVEY_SETTINGS_KEY = 'pollapp:survey-settings';
-type QuestionItem = { id: number; allowMultipleAnswers: boolean; answerFieldIndexes: number[] };
+type QuestionItem = {
+  id: number;
+  renderVersion: number;
+  allowMultipleAnswers: boolean;
+  answerFieldIndexes: number[];
+};
 
 @Component({
   selector: 'app-create-survey-page',
@@ -24,7 +29,7 @@ export class CreateSurveyPage {
   protected readonly maxAnswerFields = 6;
   protected readonly maxQuestions = 6;
   protected questions: QuestionItem[] = [
-    { id: 1, allowMultipleAnswers: false, answerFieldIndexes: [0, 1] },
+    { id: 1, renderVersion: 0, allowMultipleAnswers: false, answerFieldIndexes: [0, 1] },
   ];
 
   constructor(private readonly router: Router) {
@@ -77,8 +82,21 @@ export class CreateSurveyPage {
       : 1;
     this.questions = [
       ...this.questions,
-      { id: nextId, allowMultipleAnswers: false, answerFieldIndexes: [0, 1] },
+      { id: nextId, renderVersion: 0, allowMultipleAnswers: false, answerFieldIndexes: [0, 1] },
     ];
+  }
+
+  protected handleQuestionDelete(questionIndex: number): void {
+    if (questionIndex === 0) {
+      const firstQuestion = this.questions[0];
+      if (!firstQuestion) return;
+      this.questions = [
+        { ...firstQuestion, renderVersion: firstQuestion.renderVersion + 1 },
+        ...this.questions.slice(1),
+      ];
+      return;
+    }
+    this.questions = this.questions.filter((_, index) => index !== questionIndex);
   }
 
   protected addAnswerField(questionId: number): void {

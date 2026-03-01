@@ -121,7 +121,7 @@
 
       <section class="questions-section" aria-label="Question blocks">
         <div class="questions-grid">
-          @for (question of questions; track question.id; let questionNumber = $index) {
+          @for (question of questions; track question.id + '-' + question.renderVersion; let questionNumber = $index) {
             <section class="question-block" [attr.aria-label]="'Question ' + (questionNumber + 1)">
               <h2 class="question-block__title">{{ questionNumber + 1 }}. Question</h2>
 
@@ -129,8 +129,8 @@
                 <button
                   class="delete-button question-block__delete"
                   type="button"
-                  aria-label="Clear question"
-                  (click)="clearField(questionInput)"
+                  [attr.aria-label]="questionNumber === 0 ? 'Clear question 1' : 'Delete question ' + (questionNumber + 1)"
+                  (click)="handleQuestionDelete(questionNumber)"
                 >
                   <img class="delete-button__icon" src="/assets/delete-icon.svg" alt="" />
                   <img class="delete-button__icon-hover" src="/assets/delete-icon-hover.svg" alt="" />
