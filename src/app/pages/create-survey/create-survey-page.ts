@@ -4,6 +4,7 @@ import { addSurvey, nextSurveyId } from '../../data/survey-storage';
 import { type Survey } from '../../data/surveys';
 
 const SURVEY_SETTINGS_KEY = 'pollapp:survey-settings';
+const SURVEY_CREATED_OVERLAY_KEY = 'pollapp:survey-created-overlay';
 type SurveySettings = { allowMultipleAnswers?: boolean; surveyTitle?: string };
 type QuestionItem = {
   id: number;
@@ -133,6 +134,7 @@ export class CreateSurveyPage {
 
   protected publishSurvey(): void {
     addSurvey(this.buildSurvey());
+    localStorage.setItem(SURVEY_CREATED_OVERLAY_KEY, '1');
     this.persistSurveySettings(this.questions[0]?.allowMultipleAnswers ?? false, this.surveyTitle);
     void this.router.navigate(['/']);
   }

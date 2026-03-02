@@ -32,6 +32,26 @@
   animation-delay: 120ms;
 }
 
+.created-overlay {
+  position: fixed;
+  top: clamp(0.8rem, 2vw, 1.5rem);
+  right: clamp(0.8rem, 2vw, 1.5rem);
+  z-index: 20;
+  display: block;
+  width: min(357px, calc(100vw - 1.6rem));
+  aspect-ratio: 357 / 86;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.created-overlay img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 .hero {
   width: 100%;
   min-height: 100dvh;

@@ -1,7 +1,9 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { getAllSurveys } from '../../data/survey-storage';
 import { type Survey } from '../../data/surveys';
+
+const SURVEY_CREATED_OVERLAY_KEY = 'pollapp:survey-created-overlay';
 
 @Component({
   selector: 'app-home-page',
@@ -9,10 +11,22 @@ import { type Survey } from '../../data/surveys';
   templateUrl: './home-page.html',
   styleUrl: './home-page.scss',
 })
-export class HomePage {
+export class HomePage implements OnInit {
   protected isPastView = false;
   protected isSortMenuOpen = false;
   protected selectedSortCategory = '';
+  protected showCreatedOverlay = false;
+
+  ngOnInit(): void {
+    if (localStorage.getItem(SURVEY_CREATED_OVERLAY_KEY) !== '1') return;
+    this.showCreatedOverlay = true;
+    localStorage.removeItem(SURVEY_CREATED_OVERLAY_KEY);
+    window.setTimeout(() => (this.showCreatedOverlay = false), 3200);
+  }
+
+  protected closeCreatedOverlay(): void {
+    this.showCreatedOverlay = false;
+  }
 
   @HostListener('document:click', ['$event'])
   protected closeSortMenuOnOutsideClick(event: MouseEvent): void {
