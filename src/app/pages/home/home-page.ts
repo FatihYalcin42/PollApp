@@ -17,13 +17,25 @@ export class HomePage implements OnInit {
   protected isSortMenuOpen = false;
   protected selectedSortCategory = '';
   protected showCreatedOverlay = false;
+  protected surveys: Survey[] = [];
 
   /** Shows the "created survey" overlay once after redirect from create flow. */
   ngOnInit(): void {
+    void this.loadSurveys();
+    this.handleCreatedOverlay();
+  }
+
+  /** Shows the "created survey" overlay once after redirect from create flow. */
+  private handleCreatedOverlay(): void {
     if (localStorage.getItem(SURVEY_CREATED_OVERLAY_KEY) !== '1') return;
     this.showCreatedOverlay = true;
     localStorage.removeItem(SURVEY_CREATED_OVERLAY_KEY);
     window.setTimeout(() => (this.showCreatedOverlay = false), CREATED_OVERLAY_TIMEOUT_MS);
+  }
+
+  /** Loads surveys from configured storage backend. */
+  private async loadSurveys(): Promise<void> {
+    this.surveys = this.sortByDays(await getAllSurveys());
   }
 
   /** Closes the created-survey overlay manually. */
@@ -66,11 +78,6 @@ export class HomePage implements OnInit {
     const list = this.isPastView ? this.pastSurveys : this.activeSurveys;
     if (!this.selectedSortCategory) return list;
     return list.filter((survey) => survey.category === this.selectedSortCategory);
-  }
-
-  /** @returns Survey list sorted by remaining days ascending. */
-  private get surveys(): Survey[] {
-    return this.sortByDays(getAllSurveys());
   }
 
   /**

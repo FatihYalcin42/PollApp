@@ -179,11 +179,12 @@ export class CreateSurveyPage {
   }
 
   /** Validates and persists a new survey. */
-  protected publishSurvey(): void {
+  protected async publishSurvey(): Promise<void> {
     this.showValidationErrors = true;
     if (!this.hasValidRequiredFields()) return;
 
-    addSurvey(this.buildSurvey());
+    const survey = await this.buildSurvey();
+    await addSurvey(survey);
     localStorage.setItem(SURVEY_CREATED_OVERLAY_KEY, '1');
     this.persistSurveySettings(this.questions[0]?.allowMultipleAnswers ?? false, this.surveyTitle);
     void this.router.navigate(['/']);
@@ -289,9 +290,9 @@ export class CreateSurveyPage {
   }
 
   /** @returns Survey object ready for storage. */
-  private buildSurvey(): Survey {
+  private async buildSurvey(): Promise<Survey> {
     return {
-      id: nextSurveyId(),
+      id: await nextSurveyId(),
       category: this.selectedCategory === 'Choose categorie' ? 'Uncategorized' : this.selectedCategory,
       title: this.surveyTitle,
       description: this.surveyDescription.trim() || 'This survey was created in PollApp.',

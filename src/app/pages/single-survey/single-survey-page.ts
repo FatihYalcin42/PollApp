@@ -1,10 +1,9 @@
 import { Component, HostListener } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { getAllSurveys } from '../../shared/services/survey-storage.service';
-import { type Survey } from '../../shared/interfaces/survey.interface';
+import { type Survey, type SurveyStats } from '../../shared/interfaces/survey.interface';
+import { SURVEYS } from '../../shared/models/surveys.model';
+import { getAllSurveys, getSurveyStats, saveSurveyResponse } from '../../shared/services/survey-storage.service';
 
-type SurveyStats = { total: number; counts: Record<number, number[]> };
-type SurveyStatsStore = Record<number, SurveyStats>;
 const RESULTS_MOBILE_BREAKPOINT = 740;
 
 @Component({
@@ -19,8 +18,7 @@ export class SingleSurveyPage {
   protected answerCounts: Record<number, number[]> = {};
   protected isResultsOpen = true;
   protected isResultsToggleVisible = false;
-  private readonly fallbackSurvey = getAllSurveys()[0];
-  private readonly surveyStatsKey = 'pollapp:survey-stats';
+  private readonly fallbackSurvey = SURVEYS[0];
   protected survey: Survey = this.fallbackSurvey;
 
   /**
@@ -29,13 +27,7 @@ export class SingleSurveyPage {
    */
   constructor(private readonly route: ActivatedRoute) {
     this.updateResultsToggleVisibility();
-    this.route.paramMap.subscribe((params) => {
-      const surveys = getAllSurveys();
-      const id = Number(params.get('id'));
-      this.survey = surveys.find((item) => item.id === id) ?? surveys[0] ?? this.fallbackSurvey;
-      this.selectedAnswers = {};
-      this.loadSurveyStats();
-    });
+    this.route.paramMap.subscribe((params) => void this.loadSurveyById(params.get('id')));
   }
 
   /**
@@ -75,9 +67,10 @@ export class SingleSurveyPage {
   }
 
   /** Persists current selections as one response and clears the current selection. */
-  protected completeSurvey(): void {
+  protected async completeSurvey(): Promise<void> {
     if (!this.hasSelections()) return;
-    this.saveSurveyResponse();
+    const stats = await saveSurveyResponse(this.survey.id, this.survey.questions, this.selectedAnswers);
+    this.applyStats(stats);
     this.selectedAnswers = {};
   }
 
@@ -111,48 +104,30 @@ export class SingleSurveyPage {
     return Object.values(this.selectedAnswers).some((ids) => ids.length > 0);
   }
 
-  /** Saves one completed response to local storage and updates in-memory counters. */
-  private saveSurveyResponse(): void {
-    const store = this.readSurveyStats();
-    const current = store[this.survey.id] ?? { total: 0, counts: {} };
-    current.total += 1;
-    this.survey.questions.forEach((q) => this.addVotes(current, q.id, q.answers.length));
-    store[this.survey.id] = current;
-    localStorage.setItem(this.surveyStatsKey, JSON.stringify(store));
-    this.answerCounts = current.counts;
-    this.totalResponses = current.total;
-  }
-
   /**
-   * Applies selected votes of one question to stats counters.
-   * @param stats Mutable stats object.
-   * @param questionId Question id.
-   * @param answerCount Number of answers in this question.
+   * Loads survey by route id and then fetches stored stats.
+   * @param idParam Survey id route param.
    */
-  private addVotes(stats: SurveyStats, questionId: number, answerCount: number): void {
-    const selected = this.selectedAnswers[questionId] ?? [];
-    const counts = stats.counts[questionId] ?? Array(answerCount).fill(0);
-    selected.forEach((index) => {
-      if (index >= 0 && index < counts.length) counts[index] += 1;
-    });
-    stats.counts[questionId] = counts;
+  private async loadSurveyById(idParam: string | null): Promise<void> {
+    const id = Number(idParam);
+    const surveys = await getAllSurveys();
+    this.survey = surveys.find((item) => item.id === id) ?? surveys[0] ?? this.fallbackSurvey;
+    this.selectedAnswers = {};
+    await this.loadSurveyStats();
   }
 
   /** Loads persisted stats for the currently open survey. */
-  private loadSurveyStats(): void {
-    const stats = this.readSurveyStats()[this.survey.id];
-    this.answerCounts = stats?.counts ?? {};
-    this.totalResponses = stats?.total ?? 0;
+  private async loadSurveyStats(): Promise<void> {
+    this.applyStats(await getSurveyStats(this.survey.id));
   }
 
-  /** @returns Stored survey statistics map from local storage. */
-  private readSurveyStats(): SurveyStatsStore {
-    try {
-      const raw = localStorage.getItem(this.surveyStatsKey);
-      return raw ? (JSON.parse(raw) as SurveyStatsStore) : {};
-    } catch {
-      return {};
-    }
+  /**
+   * Applies current stats values to component state.
+   * @param stats Survey stats object.
+   */
+  private applyStats(stats: SurveyStats): void {
+    this.answerCounts = stats.counts;
+    this.totalResponses = stats.total;
   }
 
   /** Updates mobile visibility and open state of the results panel. */

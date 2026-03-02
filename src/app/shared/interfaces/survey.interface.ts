@@ -14,3 +14,8 @@ export type Survey = {
   daysLeft: number;
   questions: SurveyQuestion[];
 };
+
+export type SurveyStats = {
+  total: number;
+  counts: Record<number, number[]>;
+};
