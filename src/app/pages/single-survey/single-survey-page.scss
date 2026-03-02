@@ -320,6 +320,59 @@
   gap: 22px;
 }
 
+.single-survey-results-toggle {
+  width: fit-content;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #35273a;
+  cursor: pointer;
+}
+
+.single-survey-results-toggle:focus-visible {
+  outline: none;
+}
+
+.single-survey-results-toggle__text {
+  font-family: 'Mulish', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.single-survey-results-toggle__arrow {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  box-sizing: border-box;
+  display: inline-block;
+  flex: 0 0 24px;
+  border: 1px solid rgb(53 39 58 / 24%);
+}
+
+.single-survey-results-toggle__arrow::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 15px;
+  height: 8px;
+  background-color: #35273a;
+  -webkit-mask: url('/assets/arrow_drop_down.svg') center / contain no-repeat;
+  mask: url('/assets/arrow_drop_down.svg') center / contain no-repeat;
+  transform: translate(-50%, -50%) rotate(180deg);
+  transition: transform 160ms ease;
+}
+
+.single-survey-results-toggle__arrow.is-collapsed::before {
+  transform: translate(-50%, -50%) rotate(0deg);
+}
+
 .single-survey-results__title {
   margin: 0;
   font-family: 'Nerko One', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -441,6 +494,11 @@
   .single-survey-results {
     width: 100%;
     margin-top: 24px;
+    gap: 18px;
+  }
+
+  .single-survey-results.is-collapsed {
+    gap: 0;
   }
 
   .single-survey-results__empty {

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { getAllSurveys } from '../../data/survey-storage';
 import { type Survey } from '../../data/surveys';
@@ -16,6 +16,8 @@ export class SingleSurveyPage {
   protected selectedAnswers: Record<number, number[]> = {};
   protected totalResponses = 0;
   protected answerCounts: Record<number, number[]> = {};
+  protected isResultsOpen = true;
+  protected isResultsToggleVisible = false;
   private readonly fallbackSurvey = getAllSurveys()[0];
   private readonly surveyStatsKey = 'pollapp:survey-stats';
   protected survey: Survey = this.fallbackSurvey;
@@ -24,6 +26,7 @@ export class SingleSurveyPage {
     private readonly route: ActivatedRoute,
     private readonly router: Router,
   ) {
+    this.updateResultsToggleVisibility();
     this.route.paramMap.subscribe((params) => {
       const surveys = getAllSurveys();
       const id = Number(params.get('id'));
@@ -63,6 +66,16 @@ export class SingleSurveyPage {
     return this.totalResponses ? Math.round((votes / this.totalResponses) * 100) : 0;
   }
 
+  protected toggleResults(): void {
+    if (!this.isResultsToggleVisible) return;
+    this.isResultsOpen = !this.isResultsOpen;
+  }
+
+  @HostListener('window:resize')
+  protected onWindowResize(): void {
+    this.updateResultsToggleVisibility();
+  }
+
   private hasSelections(): boolean {
     return Object.values(this.selectedAnswers).some((ids) => ids.length > 0);
   }
@@ -100,5 +113,15 @@ export class SingleSurveyPage {
     } catch {
       return {};
     }
+  }
+
+  private updateResultsToggleVisibility(): void {
+    if (typeof window === 'undefined') {
+      this.isResultsToggleVisible = false;
+      this.isResultsOpen = true;
+      return;
+    }
+    this.isResultsToggleVisible = window.innerWidth <= 740;
+    if (!this.isResultsToggleVisible) this.isResultsOpen = true;
   }
 }
