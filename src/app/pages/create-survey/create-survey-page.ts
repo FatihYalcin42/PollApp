@@ -73,7 +73,7 @@ export class CreateSurveyPage {
 
   protected limitInputLength(event: Event): void {
     const input = event.target as HTMLInputElement;
-    input.value = input.value.slice(0, 40);
+    input.value = input.value.slice(0, 60);
   }
 
   protected limitDescriptionLength(event: Event): void {
