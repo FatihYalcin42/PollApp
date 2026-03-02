@@ -1,5 +1,5 @@
 import { Component, HostListener } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { getAllSurveys } from '../../shared/services/survey-storage.service';
 import { type Survey } from '../../shared/interfaces/survey.interface';
 
@@ -22,10 +22,7 @@ export class SingleSurveyPage {
   private readonly surveyStatsKey = 'pollapp:survey-stats';
   protected survey: Survey = this.fallbackSurvey;
 
-  constructor(
-    private readonly route: ActivatedRoute,
-    private readonly router: Router,
-  ) {
+  constructor(private readonly route: ActivatedRoute) {
     this.updateResultsToggleVisibility();
     this.route.paramMap.subscribe((params) => {
       const surveys = getAllSurveys();
@@ -57,13 +54,16 @@ export class SingleSurveyPage {
   }
 
   protected completeSurvey(): void {
-    if (this.hasSelections()) this.saveSurveyResponse();
-    void this.router.navigate(['/']);
+    if (!this.hasSelections()) return;
+    this.saveSurveyResponse();
+    this.selectedAnswers = {};
   }
 
   protected getResultPercent(questionId: number, answerIndex: number): number {
-    const votes = this.answerCounts[questionId]?.[answerIndex] ?? 0;
-    return this.totalResponses ? Math.round((votes / this.totalResponses) * 100) : 0;
+    const total = this.getProjectedTotalResponses();
+    if (!total) return 0;
+    const votes = this.getProjectedVotes(questionId, answerIndex);
+    return Math.round((votes / total) * 100);
   }
 
   protected toggleResults(): void {
@@ -123,5 +123,15 @@ export class SingleSurveyPage {
     }
     this.isResultsToggleVisible = window.innerWidth <= 740;
     if (!this.isResultsToggleVisible) this.isResultsOpen = true;
+  }
+
+  private getProjectedTotalResponses(): number {
+    return this.totalResponses + (this.hasSelections() ? 1 : 0);
+  }
+
+  private getProjectedVotes(questionId: number, answerIndex: number): number {
+    const baseVotes = this.answerCounts[questionId]?.[answerIndex] ?? 0;
+    const selected = this.selectedAnswers[questionId] ?? [];
+    return selected.includes(answerIndex) ? baseVotes + 1 : baseVotes;
   }
 }
