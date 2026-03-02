@@ -486,6 +486,20 @@
   outline: none;
 }
 
+.sort-menu__item.is-selected {
+  color: #ffb770;
+}
+
+.sort-menu__selected {
+  margin: 10px 0 0;
+  font-family: 'Mulish', var(--font-body);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  color: #ffb770;
+}
+
 .list-card {
   width: 513px;
   height: 127px;

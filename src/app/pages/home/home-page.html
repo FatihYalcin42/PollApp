@@ -91,6 +91,7 @@
                 @for (category of sortCategories; track category) {
                   <button
                     class="sort-menu__item"
+                    [class.is-selected]="selectedSortCategory === category"
                     type="button"
                     role="menuitem"
                     (click)="selectedSortCategory = selectedSortCategory === category ? '' : category; isSortMenuOpen = false"
@@ -99,6 +100,10 @@
                   </button>
                 }
               </div>
+            }
+
+            @if (selectedSortCategory) {
+              <p class="sort-menu__selected">{{ selectedSortCategory }}</p>
             }
           </div>
         </div>
