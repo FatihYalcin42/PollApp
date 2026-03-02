@@ -60,24 +60,30 @@
         </div>
 
         <div class="surveys-toolbar">
-          <div class="survey-tabs" aria-label="Survey filter tabs">
-            <button
-              class="survey-tab survey-tab--active"
-              type="button"
-              [class.is-selected]="!isPastView"
-              (click)="isPastView = false"
-            >
-              Active survey
-            </button>
-            <button
-              class="survey-tab survey-tab--past"
-              type="button"
-              [class.is-selected]="isPastView"
-              (click)="isPastView = true"
-            >
-              Past survey
-            </button>
-          </div>
+          <nav aria-label="Survey filter tabs">
+            <ul class="survey-tabs">
+              <li class="survey-tabs__item">
+                <button
+                  class="survey-tab survey-tab--active"
+                  type="button"
+                  [class.is-selected]="!isPastView"
+                  (click)="isPastView = false"
+                >
+                  Active survey
+                </button>
+              </li>
+              <li class="survey-tabs__item">
+                <button
+                  class="survey-tab survey-tab--past"
+                  type="button"
+                  [class.is-selected]="isPastView"
+                  (click)="isPastView = true"
+                >
+                  Past survey
+                </button>
+              </li>
+            </ul>
+          </nav>
 
           <div class="sort-menu">
             <button
