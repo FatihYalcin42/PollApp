@@ -331,8 +331,10 @@
 
 .survey-tabs {
   margin-top: 12px;
-  display: inline-flex;
+  width: 100%;
+  display: flex;
   align-items: center;
+  justify-content: flex-start;
   gap: 10px;
 }
 
