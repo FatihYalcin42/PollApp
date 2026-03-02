@@ -50,14 +50,15 @@
                   id="survey-end-date-input"
                   type="text"
                   aria-label="Set end date optional"
-                  (input)="limitInputLength($event)"
+                  [value]="endDate"
+                  (input)="limitInputLength($event); updateEndDate(endDateInput.value)"
                 />
 
                 <button
                   class="delete-button"
                   type="button"
                   aria-label="Clear end date input"
-                  (click)="clearField(endDateInput)"
+                  (click)="clearField(endDateInput); updateEndDate('')"
                 >
                   <img class="delete-button__icon" src="/assets/delete-icon.svg" alt="" />
                   <img class="delete-button__icon-hover" src="/assets/delete-icon-hover.svg" alt="" />
@@ -238,15 +239,18 @@
     </div>
 
     <div class="create-survey-footer">
-      <button
-        class="create-survey-submit-button"
-        type="button"
-        aria-label="Publish survey"
-        (click)="publishSurvey()"
-      >
-        <span class="create-survey-submit-button__text">Publish</span>
-        <img class="create-survey-submit-button__icon" src="/assets/check.svg" alt="" />
-      </button>
+      <div class="create-survey-footer__actions">
+        <button
+          class="create-survey-submit-button"
+          type="button"
+          aria-label="Publish survey"
+          (click)="publishSurvey()"
+        >
+          <span class="create-survey-submit-button__text">Publish</span>
+          <img class="create-survey-submit-button__icon" src="/assets/check.svg" alt="" />
+        </button>
+        <p class="create-survey-end-date">Ends on {{ endDate || '--.--.----' }}</p>
+      </div>
     </div>
   </section>
 </main>

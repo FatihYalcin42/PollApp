@@ -20,6 +20,7 @@ export class CreateSurveyPage {
   protected isCategoryDropdownOpen = false;
   protected selectedCategory = 'Choose categorie';
   protected surveyTitle = '';
+  protected endDate = '';
   protected readonly categories = [
     'Team Activities',
     'Health & Wellness',
@@ -142,6 +143,10 @@ export class CreateSurveyPage {
 
   protected updateSurveyTitle(value: string): void {
     this.surveyTitle = value.trim();
+  }
+
+  protected updateEndDate(value: string): void {
+    this.endDate = value.trim();
   }
 
   private readAllowMultipleAnswers(): boolean {
