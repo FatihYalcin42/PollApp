@@ -27,6 +27,7 @@ export class CreateSurveyPage {
   protected surveyTitle = '';
   protected surveyDescription = '';
   protected endDate = '';
+  protected showValidationErrors = false;
   protected readonly categories = [
     'Team Activities',
     'Health & Wellness',
@@ -159,6 +160,9 @@ export class CreateSurveyPage {
   }
 
   protected publishSurvey(): void {
+    this.showValidationErrors = true;
+    if (!this.hasValidRequiredFields()) return;
+
     addSurvey(this.buildSurvey());
     localStorage.setItem(SURVEY_CREATED_OVERLAY_KEY, '1');
     this.persistSurveySettings(this.questions[0]?.allowMultipleAnswers ?? false, this.surveyTitle);
@@ -195,6 +199,23 @@ export class CreateSurveyPage {
     );
   }
 
+  protected isSurveyTitleInvalid(): boolean {
+    return this.showValidationErrors && !this.surveyTitle.trim();
+  }
+
+  protected isQuestionPromptInvalid(question: QuestionItem): boolean {
+    return this.showValidationErrors && !this.isQuestionPromptFilled(question);
+  }
+
+  protected isAnswerInputInvalid(question: QuestionItem, answerFieldIndex: number): boolean {
+    if (!this.showValidationErrors) return false;
+    return !(question.answers[answerFieldIndex] ?? '').trim();
+  }
+
+  protected isQuestionAnswersInvalid(question: QuestionItem): boolean {
+    return this.showValidationErrors && !this.hasValidAnswerOptions(question);
+  }
+
   protected get formattedEndDate(): string {
     if (!this.endDate) return '--.--.----';
     const [year, month, day] = this.endDate.split('-');
@@ -205,7 +226,7 @@ export class CreateSurveyPage {
     return {
       id: nextSurveyId(),
       category: this.selectedCategory === 'Choose categorie' ? 'Uncategorized' : this.selectedCategory,
-      title: this.surveyTitle || 'Untitled survey',
+      title: this.surveyTitle,
       description: this.surveyDescription.trim() || 'This survey was created in PollApp.',
       daysLeft: this.getDaysLeft(),
       questions: this.getSurveyQuestions(),
@@ -223,7 +244,7 @@ export class CreateSurveyPage {
   private getSurveyQuestions() {
     return this.questions.map((question, index) => ({
       id: index + 1,
-      prompt: question.prompt.trim() || `Question ${index + 1}`,
+      prompt: question.prompt.trim(),
       hint: question.allowMultipleAnswers ? 'More than one answers are possible.' : '',
       allowMultiple: question.allowMultipleAnswers,
       answers: this.getSurveyAnswers(question.answerFieldIndexes, question.answers),
@@ -231,10 +252,7 @@ export class CreateSurveyPage {
   }
 
   private getSurveyAnswers(indexes: number[], answers: Record<number, string>): string[] {
-    return indexes.map((idx, pos) => {
-      const value = answers[idx]?.trim();
-      return value || `Option ${String.fromCharCode(65 + pos)}`;
-    });
+    return indexes.map((idx) => answers[idx]?.trim() ?? '');
   }
 
   private readAllowMultipleAnswers(): boolean {
@@ -254,5 +272,23 @@ export class CreateSurveyPage {
       SURVEY_SETTINGS_KEY,
       JSON.stringify({ allowMultipleAnswers, surveyTitle: title }),
     );
+  }
+
+  private hasValidRequiredFields(): boolean {
+    if (!this.surveyTitle.trim()) return false;
+    return this.questions.every(
+      (question) => this.isQuestionPromptFilled(question) && this.hasValidAnswerOptions(question),
+    );
+  }
+
+  private isQuestionPromptFilled(question: QuestionItem): boolean {
+    return question.prompt.trim().length > 0;
+  }
+
+  private hasValidAnswerOptions(question: QuestionItem): boolean {
+    const answerValues = question.answerFieldIndexes.map(
+      (answerFieldIndex) => (question.answers[answerFieldIndex] ?? '').trim(),
+    );
+    return answerValues.length >= 2 && answerValues.every((value) => value.length > 0);
   }
 }

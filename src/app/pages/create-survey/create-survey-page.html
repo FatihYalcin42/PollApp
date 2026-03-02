@@ -14,11 +14,14 @@
       <div class="create-survey-top-row">
         <div class="create-survey-inputs">
           <div class="create-survey-input-group">
-            <label class="create-survey-field-title" for="survey-name-input">Survey name</label>
+            <label class="create-survey-field-title" for="survey-name-input">
+              Survey name <span class="create-survey-field-title-required">*</span>
+            </label>
             <div class="create-survey-input-row">
               <input
                 #surveyNameInput
                 class="create-survey-input"
+                [class.create-survey-input--error]="isSurveyTitleInvalid()"
                 id="survey-name-input"
                 type="text"
                 [value]="surveyTitle"
@@ -36,6 +39,9 @@
                 <img class="delete-button__icon-hover" src="/assets/delete-icon-hover.svg" alt="" />
               </button>
             </div>
+            @if (isSurveyTitleInvalid()) {
+              <p class="create-survey-error">Survey name is required.</p>
+            }
           </div>
 
           <div class="create-survey-input-group create-survey-input-group--split">
@@ -126,7 +132,9 @@
         <div class="questions-grid">
           @for (question of questions; track question.id + '-' + question.renderVersion; let questionNumber = $index) {
             <section class="question-block" [attr.aria-label]="'Question ' + (questionNumber + 1)">
-              <h2 class="question-block__title">{{ questionNumber + 1 }}. Question</h2>
+              <h2 class="question-block__title">
+                {{ questionNumber + 1 }}. Question <span class="create-survey-field-title-required">*</span>
+              </h2>
 
               <div class="question-block__input-wrap">
                 <button
@@ -142,16 +150,22 @@
                 <input
                   #questionInput
                   class="create-survey-input question-block__input"
+                  [class.create-survey-input--error]="isQuestionPromptInvalid(question)"
                   type="text"
                   [value]="question.prompt"
                   aria-label="Question text"
                   (input)="limitInputLength($event); updateQuestionPrompt(question.id, questionInput.value)"
                 />
               </div>
+              @if (isQuestionPromptInvalid(question)) {
+                <p class="create-survey-error">Question text is required.</p>
+              }
 
               <div class="answers-block" aria-label="Answers">
                 <div class="answers-block__header">
-                  <h3 class="answers-block__title">Answers</h3>
+                  <h3 class="answers-block__title">
+                    Answers <span class="create-survey-field-title-required">*</span>
+                  </h3>
 
                   <label class="answers-toggle" [attr.for]="'allow-multiple-answers-' + question.id">
                     <input
@@ -173,6 +187,7 @@
                       <input
                         #answerInput
                         class="create-survey-input answer-row__input"
+                        [class.create-survey-input--error]="isAnswerInputInvalid(question, answerIndex)"
                         type="text"
                         [value]="question.answers[answerIndex] ?? ''"
                         [attr.aria-label]="'Answer ' + getAnswerLabel(index)"
@@ -190,6 +205,9 @@
                     </div>
                   }
                 </div>
+                @if (isQuestionAnswersInvalid(question)) {
+                  <p class="create-survey-error">At least 2 answer options are required, and all answer fields must be filled.</p>
+                }
 
                 <div class="answers-block__footer">
                   <button

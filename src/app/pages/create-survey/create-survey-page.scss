@@ -252,6 +252,10 @@
   color: #fefdff;
 }
 
+.create-survey-field-title-required {
+  color: #ffcfa1;
+}
+
 .create-survey-field-title-optional {
   font-weight: 400;
 }
@@ -306,6 +310,21 @@
 .create-survey-input:focus {
   outline: 2px solid rgb(238 146 54 / 40%);
   outline-offset: 1px;
+}
+
+.create-survey-input--error {
+  outline: 2px solid rgb(255 183 112 / 65%);
+  outline-offset: 1px;
+}
+
+.create-survey-error {
+  margin: 0;
+  font-family: 'Mulish', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 1.2;
+  letter-spacing: 0;
+  color: #ffcfa1;
 }
 
 .delete-button {
