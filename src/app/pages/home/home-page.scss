@@ -541,6 +541,15 @@
   color: #fefdff;
 }
 
+.list-card:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.list-card:disabled .list-card__meta {
+  background: #d9d9d9;
+}
+
 .list-card__category {
   font-family: 'Mulish', var(--font-body);
   font-weight: 500;
