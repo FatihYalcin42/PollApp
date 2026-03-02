@@ -3,9 +3,6 @@ import { RouterLink } from '@angular/router';
 import { getAllSurveys, subscribeToSurveyChanges } from '../../shared/services/survey-storage.service';
 import { type Survey } from '../../shared/interfaces/survey.interface';
 
-const SURVEY_CREATED_OVERLAY_KEY = 'pollapp:survey-created-overlay';
-const CREATED_OVERLAY_TIMEOUT_MS = 3200;
-
 @Component({
   selector: 'app-home-page',
   imports: [RouterLink],
@@ -16,20 +13,18 @@ export class HomePage implements OnInit, OnDestroy {
   protected isPastView = false;
   protected isSortMenuOpen = false;
   protected selectedSortCategory = '';
-  protected showCreatedOverlay = false;
   protected surveys: Survey[] = [];
   private unsubscribeSurveyChanges: (() => void) | null = null;
 
   constructor(private readonly cdr: ChangeDetectorRef) {}
 
-  /** Shows the "created survey" overlay once after redirect from create flow. */
+  /** Loads surveys and subscribes to realtime list changes. */
   ngOnInit(): void {
     this.unsubscribeSurveyChanges = subscribeToSurveyChanges((surveys) => {
       this.surveys = this.sortByDays(surveys);
       this.cdr.detectChanges();
     });
     void this.loadSurveys();
-    this.handleCreatedOverlay();
   }
 
   ngOnDestroy(): void {
@@ -37,23 +32,10 @@ export class HomePage implements OnInit, OnDestroy {
     this.unsubscribeSurveyChanges = null;
   }
 
-  /** Shows the "created survey" overlay once after redirect from create flow. */
-  private handleCreatedOverlay(): void {
-    if (localStorage.getItem(SURVEY_CREATED_OVERLAY_KEY) !== '1') return;
-    this.showCreatedOverlay = true;
-    localStorage.removeItem(SURVEY_CREATED_OVERLAY_KEY);
-    window.setTimeout(() => (this.showCreatedOverlay = false), CREATED_OVERLAY_TIMEOUT_MS);
-  }
-
   /** Loads surveys from configured storage backend. */
   private async loadSurveys(): Promise<void> {
     this.surveys = this.sortByDays(await getAllSurveys());
     this.cdr.detectChanges();
-  }
-
-  /** Closes the created-survey overlay manually. */
-  protected closeCreatedOverlay(): void {
-    this.showCreatedOverlay = false;
   }
 
   /**

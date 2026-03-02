@@ -2,7 +2,6 @@ import { ChangeDetectorRef, Component, HostListener, OnDestroy } from '@angular/
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { type Survey, type SurveyStats } from '../../shared/interfaces/survey.interface';
-import { SURVEYS } from '../../shared/models/surveys.model';
 import {
   getAllSurveys,
   getSurveyStats,
@@ -24,8 +23,7 @@ export class SingleSurveyPage implements OnDestroy {
   protected answerCounts: Record<number, number[]> = {};
   protected isResultsOpen = true;
   protected isResultsToggleVisible = false;
-  private readonly fallbackSurvey = SURVEYS[0];
-  protected survey: Survey = this.fallbackSurvey;
+  protected survey: Survey | null = null;
   private routeParamSubscription: Subscription | null = null;
   private unsubscribeSurveyStats: (() => void) | null = null;
 
@@ -53,6 +51,7 @@ export class SingleSurveyPage implements OnDestroy {
    * @param answerIndex Answer index.
    */
   protected toggleAnswer(questionId: number, answerIndex: number): void {
+    if (!this.survey) return;
     const question = this.survey.questions.find((item) => item.id === questionId);
     if (!question) return;
     const current = this.selectedAnswers[questionId] ?? [];
@@ -85,7 +84,7 @@ export class SingleSurveyPage implements OnDestroy {
 
   /** Persists current selections as one response and clears the current selection. */
   protected async completeSurvey(): Promise<void> {
-    if (!this.hasSelections()) return;
+    if (!this.survey || !this.hasSelections()) return;
     const stats = await saveSurveyResponse(this.survey.id, this.survey.questions, this.selectedAnswers);
     this.applyStats(stats);
     this.selectedAnswers = {};
@@ -98,6 +97,7 @@ export class SingleSurveyPage implements OnDestroy {
    * @returns Rounded percentage value.
    */
   protected getResultPercent(questionId: number, answerIndex: number): number {
+    if (!this.survey) return 0;
     const total = this.getProjectedTotalResponses();
     if (!total) return 0;
     const votes = this.getProjectedVotes(questionId, answerIndex);
@@ -128,7 +128,11 @@ export class SingleSurveyPage implements OnDestroy {
   private async loadSurveyById(idParam: string | null): Promise<void> {
     const id = Number(idParam);
     const surveys = await getAllSurveys();
-    this.survey = surveys.find((item) => item.id === id) ?? surveys[0] ?? this.fallbackSurvey;
+    if (!surveys.length) {
+      this.clearStateForMissingSurvey();
+      return;
+    }
+    this.survey = surveys.find((item) => item.id === id) ?? surveys[0];
     this.selectedAnswers = {};
     this.subscribeToCurrentSurveyStats();
     await this.loadSurveyStats();
@@ -137,6 +141,7 @@ export class SingleSurveyPage implements OnDestroy {
 
   /** Loads persisted stats for the currently open survey. */
   private async loadSurveyStats(): Promise<void> {
+    if (!this.survey) return;
     this.applyStats(await getSurveyStats(this.survey.id));
   }
 
@@ -162,6 +167,7 @@ export class SingleSurveyPage implements OnDestroy {
 
   private subscribeToCurrentSurveyStats(): void {
     this.unsubscribeFromSurveyStats();
+    if (!this.survey) return;
     this.unsubscribeSurveyStats = subscribeToSurveyStats(this.survey.id, (stats) => {
       this.applyStats(stats);
       this.cdr.detectChanges();
@@ -171,6 +177,15 @@ export class SingleSurveyPage implements OnDestroy {
   private unsubscribeFromSurveyStats(): void {
     this.unsubscribeSurveyStats?.();
     this.unsubscribeSurveyStats = null;
+  }
+
+  private clearStateForMissingSurvey(): void {
+    this.survey = null;
+    this.selectedAnswers = {};
+    this.answerCounts = {};
+    this.totalResponses = 0;
+    this.unsubscribeFromSurveyStats();
+    this.cdr.detectChanges();
   }
 
   /** @returns Stored response total plus a projected current vote. */

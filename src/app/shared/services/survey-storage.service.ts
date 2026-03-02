@@ -1,11 +1,7 @@
 import { type RealtimeChannel, type RealtimePostgresChangesPayload } from '@supabase/supabase-js';
-import { type Survey, type SurveyQuestion, type SurveyStats } from '../interfaces/survey.interface';
-import { SURVEYS } from '../models/surveys.model';
-import { supabase } from './supabase-client.service';
 
-const CREATED_SURVEYS_KEY = 'pollapp:created-surveys';
-const SURVEY_STATS_KEY = 'pollapp:survey-stats';
-const SUPABASE_MIGRATION_KEY = 'pollapp:supabase-migration-v1';
+import { type Survey, type SurveyQuestion, type SurveyStats } from '../interfaces/survey.interface';
+import { supabase } from './supabase-client.service';
 
 type DbSurveyRow = {
   id: number;
@@ -22,17 +18,15 @@ type DbStatsRow = {
   counts: Record<string, number[]>;
 };
 
-type LocalSurveyStatsStore = Record<number, SurveyStats>;
 type SurveyChangeListener = (surveys: Survey[]) => void;
 type SurveyStatsChangeListener = (stats: SurveyStats) => void;
 
-let hasBootstrapped = false;
-let bootstrapPromise: Promise<void> | null = null;
 const surveyListeners = new Set<SurveyChangeListener>();
 const surveyStatsListeners = new Map<number, Set<SurveyStatsChangeListener>>();
 let surveysChannel: RealtimeChannel | null = null;
 let surveyStatsChannel: RealtimeChannel | null = null;
 
+/** Registers a callback for live survey list updates. */
 export function subscribeToSurveyChanges(listener: SurveyChangeListener): () => void {
   surveyListeners.add(listener);
   ensureSurveyRealtimeChannel();
@@ -42,61 +36,55 @@ export function subscribeToSurveyChanges(listener: SurveyChangeListener): () => 
   };
 }
 
+/** Registers a callback for live stats updates of a single survey. */
 export function subscribeToSurveyStats(surveyId: number, listener: SurveyStatsChangeListener): () => void {
   const listeners = surveyStatsListeners.get(surveyId) ?? new Set<SurveyStatsChangeListener>();
   listeners.add(listener);
   surveyStatsListeners.set(surveyId, listeners);
   ensureSurveyStatsRealtimeChannel();
-  return () => {
-    const current = surveyStatsListeners.get(surveyId);
-    if (!current) return;
-    current.delete(listener);
-    if (!current.size) surveyStatsListeners.delete(surveyId);
-    maybeRemoveSurveyStatsRealtimeChannel();
-  };
+  return () => unsubscribeSurveyStatsListener(surveyId, listener);
 }
 
+/** Returns all surveys from Supabase ordered by deadline and id. */
 export async function getAllSurveys(): Promise<Survey[]> {
-  await bootstrapStore();
-  if (!supabase) return getLocalSurveys();
+  if (!supabase) return [];
   const { data, error } = await supabase
     .from('surveys')
     .select('id, category, title, description, days_left, questions')
     .order('days_left', { ascending: true })
     .order('id', { ascending: true });
-  if (error || !data) return getLocalSurveys();
+  if (error || !data) return [];
   return data.map(mapDbSurveyToSurvey);
 }
 
+/** Creates or updates one survey in Supabase. */
 export async function addSurvey(survey: Survey): Promise<void> {
-  await bootstrapStore();
-  if (!supabase) {
-    addLocalSurvey(survey);
-    await notifySurveyListeners();
-    return;
-  }
-  const { error } = await supabase.from('surveys').upsert(mapSurveyToDb(survey), { onConflict: 'id' });
-  if (error) addLocalSurvey(survey);
+  if (!supabase) return;
+  const payload = mapSurveyToDb(survey);
+  const { error } = await supabase.from('surveys').upsert(payload, { onConflict: 'id' });
+  if (error) return;
   await notifySurveyListeners();
 }
 
+/** Calculates the next integer survey id from current database rows. */
 export async function nextSurveyId(): Promise<number> {
   const ids = (await getAllSurveys()).map((survey) => survey.id);
   return ids.length ? Math.max(...ids) + 1 : 1;
 }
 
+/** Returns vote stats for one survey id from Supabase. */
 export async function getSurveyStats(surveyId: number): Promise<SurveyStats> {
-  await bootstrapStore();
-  if (!supabase) return readLocalSurveyStats(surveyId);
+  if (!supabase) return createEmptySurveyStats();
   const { data, error } = await supabase
     .from('survey_stats')
     .select('survey_id, total_responses, counts')
     .eq('survey_id', surveyId)
     .maybeSingle();
-  if (error || !data) return readLocalSurveyStats(surveyId);
+  if (error || !data) return createEmptySurveyStats();
   return mapDbStatsToSurveyStats(data);
 }
 
+/** Persists one submitted vote set and returns the latest stats snapshot. */
 export async function saveSurveyResponse(
   surveyId: number,
   questions: SurveyQuestion[],
@@ -108,58 +96,11 @@ export async function saveSurveyResponse(
   return next;
 }
 
-async function bootstrapStore(): Promise<void> {
-  if (hasBootstrapped) return;
-  if (bootstrapPromise) {
-    await bootstrapPromise;
-    return;
-  }
-  bootstrapPromise = (async () => {
-    if (supabase) await migrateLocalDataToSupabase();
-    hasBootstrapped = true;
-  })();
-  try {
-    await bootstrapPromise;
-  } finally {
-    bootstrapPromise = null;
-  }
-}
-
-async function migrateLocalDataToSupabase(): Promise<void> {
-  if (!supabase || !canUseLocalStorage()) return;
-  if (localStorage.getItem(SUPABASE_MIGRATION_KEY) === '1') return;
-  const surveys = getLocalSurveys().map(mapSurveyToDb);
-  const stats = mapLocalStatsToDb(readLocalSurveyStatsStore());
-  const surveyResult = await upsertSurveys(surveys);
-  if (!surveyResult) return;
-  const statsResult = await upsertStats(stats);
-  if (!statsResult) return;
-  clearLocalSurveyData();
-  localStorage.setItem(SUPABASE_MIGRATION_KEY, '1');
-}
-
-async function upsertSurveys(rows: DbSurveyRow[]): Promise<boolean> {
-  if (!supabase || !rows.length) return true;
-  const { error } = await supabase.from('surveys').upsert(rows, { onConflict: 'id' });
-  return !error;
-}
-
-async function upsertStats(rows: DbStatsRow[]): Promise<boolean> {
-  if (!supabase || !rows.length) return true;
-  const { error } = await supabase.from('survey_stats').upsert(rows, { onConflict: 'survey_id' });
-  return !error;
-}
-
 async function persistSurveyStats(surveyId: number, stats: SurveyStats): Promise<void> {
-  await bootstrapStore();
-  if (!supabase) {
-    writeLocalSurveyStats(surveyId, stats);
-    await notifySurveyStatsListeners(surveyId);
-    return;
-  }
+  if (!supabase) return;
   const payload = mapSurveyStatsToDb(surveyId, stats);
   const { error } = await supabase.from('survey_stats').upsert(payload, { onConflict: 'survey_id' });
-  if (error) writeLocalSurveyStats(surveyId, stats);
+  if (error) return;
   await notifySurveyStatsListeners(surveyId);
 }
 
@@ -202,14 +143,18 @@ function ensureSurveyStatsRealtimeChannel(): void {
   surveyStatsChannel = supabase
     .channel('survey-stats-changes-channel')
     .on('postgres_changes', { event: '*', schema: 'public', table: 'survey_stats' }, (payload) => {
-      const surveyId = getChangedSurveyId(payload);
-      if (surveyId === null) {
-        void notifyAllSurveyStatsListeners();
-        return;
-      }
-      void notifySurveyStatsListeners(surveyId);
+      handleSurveyStatsRealtimePayload(payload);
     })
     .subscribe();
+}
+
+function handleSurveyStatsRealtimePayload(payload: RealtimePostgresChangesPayload<Record<string, unknown>>): void {
+  const surveyId = getChangedSurveyId(payload);
+  if (surveyId === null) {
+    void notifyAllSurveyStatsListeners();
+    return;
+  }
+  void notifySurveyStatsListeners(surveyId);
 }
 
 function maybeRemoveSurveyStatsRealtimeChannel(): void {
@@ -220,6 +165,14 @@ function maybeRemoveSurveyStatsRealtimeChannel(): void {
 
 function hasSurveyStatsListeners(): boolean {
   return surveyStatsListeners.size > 0;
+}
+
+function unsubscribeSurveyStatsListener(surveyId: number, listener: SurveyStatsChangeListener): void {
+  const listeners = surveyStatsListeners.get(surveyId);
+  if (!listeners) return;
+  listeners.delete(listener);
+  if (!listeners.size) surveyStatsListeners.delete(surveyId);
+  maybeRemoveSurveyStatsRealtimeChannel();
 }
 
 function getChangedSurveyId(payload: RealtimePostgresChangesPayload<Record<string, unknown>>): number | null {
@@ -276,10 +229,6 @@ function mapSurveyStatsToDb(surveyId: number, stats: SurveyStats): DbStatsRow {
   };
 }
 
-function mapLocalStatsToDb(store: LocalSurveyStatsStore): DbStatsRow[] {
-  return Object.entries(store).map(([surveyId, stats]) => mapSurveyStatsToDb(Number(surveyId), stats));
-}
-
 function applySurveyVote(
   current: SurveyStats,
   questions: SurveyQuestion[],
@@ -324,55 +273,9 @@ function toDbStatsCounts(counts: Record<number, number[]>): Record<string, numbe
   return Object.fromEntries(Object.entries(counts).map(([key, values]) => [String(key), values]));
 }
 
-function getLocalSurveys(): Survey[] {
-  return [...SURVEYS, ...readCreatedSurveys()];
-}
-
-function addLocalSurvey(survey: Survey): void {
-  const current = readCreatedSurveys();
-  localStorage.setItem(CREATED_SURVEYS_KEY, JSON.stringify([...current, survey]));
-}
-
-function readCreatedSurveys(): Survey[] {
-  if (!canUseLocalStorage()) return [];
-  try {
-    const raw = localStorage.getItem(CREATED_SURVEYS_KEY);
-    return raw ? (JSON.parse(raw) as Survey[]) : [];
-  } catch {
-    return [];
-  }
-}
-
-function readLocalSurveyStats(surveyId: number): SurveyStats {
-  return readLocalSurveyStatsStore()[surveyId] ?? { total: 0, counts: {} };
-}
-
-function writeLocalSurveyStats(surveyId: number, stats: SurveyStats): void {
-  const store = readLocalSurveyStatsStore();
-  store[surveyId] = stats;
-  localStorage.setItem(SURVEY_STATS_KEY, JSON.stringify(store));
-}
-
-function readLocalSurveyStatsStore(): LocalSurveyStatsStore {
-  if (!canUseLocalStorage()) return {};
-  try {
-    const raw = localStorage.getItem(SURVEY_STATS_KEY);
-    if (!raw) return {};
-    return normalizeLocalSurveyStats(JSON.parse(raw) as Record<string, SurveyStats>);
-  } catch {
-    return {};
-  }
-}
-
-function normalizeLocalSurveyStats(store: Record<string, SurveyStats>): LocalSurveyStatsStore {
-  return Object.fromEntries(Object.entries(store).map(([key, value]) => [Number(key), value])) as LocalSurveyStatsStore;
-}
-
-function clearLocalSurveyData(): void {
-  localStorage.removeItem(CREATED_SURVEYS_KEY);
-  localStorage.removeItem(SURVEY_STATS_KEY);
-}
-
-function canUseLocalStorage(): boolean {
-  return typeof window !== 'undefined' && !!window.localStorage;
+function createEmptySurveyStats(): SurveyStats {
+  return {
+    total: 0,
+    counts: {},
+  };
 }

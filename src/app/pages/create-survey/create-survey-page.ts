@@ -3,13 +3,10 @@ import { Router, RouterLink } from '@angular/router';
 import { addSurvey, nextSurveyId } from '../../shared/services/survey-storage.service';
 import { type Survey } from '../../shared/interfaces/survey.interface';
 
-const SURVEY_SETTINGS_KEY = 'pollapp:survey-settings';
-const SURVEY_CREATED_OVERLAY_KEY = 'pollapp:survey-created-overlay';
 const MAX_INPUT_LENGTH = 60;
 const MAX_DESCRIPTION_LENGTH = 160;
 const DEFAULT_DAYS_LEFT = 30;
 const MS_PER_DAY = 86400000;
-type SurveySettings = { allowMultipleAnswers?: boolean; surveyTitle?: string };
 type QuestionItem = {
   id: number;
   renderVersion: number;
@@ -53,9 +50,7 @@ export class CreateSurveyPage {
     },
   ];
 
-  constructor(private readonly router: Router) {
-    this.questions[0].allowMultipleAnswers = this.readAllowMultipleAnswers();
-  }
+  constructor(private readonly router: Router) {}
 
   /** Toggles the category dropdown state. */
   protected toggleCategoryDropdown(): void {
@@ -182,11 +177,8 @@ export class CreateSurveyPage {
   protected async publishSurvey(): Promise<void> {
     this.showValidationErrors = true;
     if (!this.hasValidRequiredFields()) return;
-
     const survey = await this.buildSurvey();
     await addSurvey(survey);
-    localStorage.setItem(SURVEY_CREATED_OVERLAY_KEY, '1');
-    this.persistSurveySettings(this.questions[0]?.allowMultipleAnswers ?? false, this.surveyTitle);
     void this.router.navigate(['/']);
   }
 
@@ -295,7 +287,7 @@ export class CreateSurveyPage {
       id: await nextSurveyId(),
       category: this.selectedCategory === 'Choose categorie' ? 'Uncategorized' : this.selectedCategory,
       title: this.surveyTitle,
-      description: this.surveyDescription.trim() || 'This survey was created in PollApp.',
+      description: this.surveyDescription.trim(),
       daysLeft: this.getDaysLeft(),
       questions: this.getSurveyQuestions(),
     };
@@ -311,7 +303,7 @@ export class CreateSurveyPage {
   }
 
   /** @returns Normalized survey questions for persistence. */
-  private getSurveyQuestions() {
+  private getSurveyQuestions(): Survey['questions'] {
     return this.questions.map((question, index) => ({
       id: index + 1,
       prompt: question.prompt.trim(),
@@ -329,31 +321,6 @@ export class CreateSurveyPage {
    */
   private getSurveyAnswers(indexes: number[], answers: Record<number, string>): string[] {
     return indexes.map((idx) => answers[idx]?.trim() ?? '');
-  }
-
-  /** @returns Saved default state for "allow multiple answers". */
-  private readAllowMultipleAnswers(): boolean {
-    try {
-      const raw = localStorage.getItem(SURVEY_SETTINGS_KEY);
-      if (!raw) return false;
-      const parsed = JSON.parse(raw) as SurveySettings;
-      return !!parsed.allowMultipleAnswers;
-    } catch {
-      return false;
-    }
-  }
-
-  /**
-   * Persists default settings for next survey creation.
-   * @param allowMultipleAnswers Default multiselect flag.
-   * @param surveyTitle Last used survey title.
-   */
-  private persistSurveySettings(allowMultipleAnswers: boolean, surveyTitle: string): void {
-    const title = surveyTitle || 'Untitled survey';
-    localStorage.setItem(
-      SURVEY_SETTINGS_KEY,
-      JSON.stringify({ allowMultipleAnswers, surveyTitle: title }),
-    );
   }
 
   /** @returns Next unique question id for the current draft. */
