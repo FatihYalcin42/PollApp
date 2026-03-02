@@ -35,13 +35,15 @@
 
 .single-survey-layout__content {
   width: 100%;
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 702px) minmax(320px, 360px);
   align-items: flex-start;
   gap: 30px;
 }
 
 .single-survey-surface {
-  width: min(702px, 100%);
+  width: 100%;
+  max-width: 702px;
   min-height: 855px;
   height: auto;
   box-sizing: border-box;
@@ -311,7 +313,7 @@
 }
 
 .single-survey-results {
-  width: min(360px, 100%);
+  width: 100%;
   margin-top: 160px;
   display: flex;
   flex-direction: column;
@@ -431,9 +433,9 @@
   color: #d79451;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 740px) {
   .single-survey-layout__content {
-    flex-direction: column;
+    grid-template-columns: 1fr;
   }
 
   .single-survey-results {
