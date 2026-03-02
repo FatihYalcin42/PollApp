@@ -672,6 +672,85 @@
 }
 
 @media (max-width: 760px) {
+  .home {
+    padding-top: 18px;
+  }
+
+  .brand-logo {
+    position: static;
+    top: auto;
+    left: auto;
+    width: clamp(7rem, 30vw, 9rem);
+    margin-bottom: 12px;
+  }
+
+  .hero {
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    padding-top: 0;
+    text-align: left;
+  }
+
+  .hero__content {
+    display: contents;
+    max-width: none;
+  }
+
+  .hero__title {
+    order: 1;
+  }
+
+  .hero__title span {
+    margin-inline: 0;
+  }
+
+  .hero__visual {
+    order: 2;
+    align-self: center;
+    justify-self: auto;
+    width: min(74vw, 18rem);
+  }
+
+  .hero__subtitle {
+    order: 3;
+    margin-inline: 0;
+    max-width: 100%;
+    text-align: left;
+  }
+
+  .hero__actions {
+    order: 4;
+    margin-top: 2px;
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  .new-survey-button,
+  .new-survey-button:hover,
+  .new-survey-button:focus-visible {
+    width: auto;
+    min-width: 0;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 16px;
+  }
+
+  .new-survey-button__icon {
+    order: -1;
+    margin-left: 0;
+    flex: 0 0 20px;
+    width: 20px;
+    height: 20px;
+  }
+
+  .new-survey-button__icon-svg {
+    clip-path: inset(0 0 0 0);
+    transform: none;
+  }
+
   .highlight-cards {
     justify-content: flex-start;
   }
@@ -696,10 +775,6 @@
 }
 
 @media (max-width: 640px) {
-  .brand-logo {
-    width: clamp(7rem, 28vw, 9rem);
-  }
-
   .hero__title {
     font-size: clamp(2.6rem, 14vw, 3.5rem);
   }
