@@ -329,6 +329,46 @@
   justify-content: start;
 }
 
+.survey-tabs {
+  margin-top: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.survey-tab {
+  height: 25px;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 2px 10px;
+  border: 0;
+  border-radius: 20px;
+  background: #fee9d4;
+  color: #35273a;
+  font-family: 'Nokora', var(--font-body);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1;
+  letter-spacing: 0;
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+
+.survey-tab--active {
+  width: 119px;
+}
+
+.survey-tab--past {
+  width: 106px;
+}
+
+.survey-tab.is-selected {
+  background: #ffb770;
+}
+
 .list-card {
   width: 513px;
   height: 127px;

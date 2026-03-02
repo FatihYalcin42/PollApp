@@ -10,12 +10,19 @@ import { SURVEYS, type Survey } from '../../data/surveys';
 })
 export class HomePage {
   private readonly surveys = SURVEYS;
+  protected isPastView = false;
+  private readonly activeByDate = this.surveys.filter((survey) => survey.daysLeft > 0);
+  private readonly pastByDate = this.surveys.filter((survey) => survey.daysLeft <= 0);
   protected readonly activeSurveys = this.repeatToLength(
-    this.surveys,
-    Math.max(6, this.surveys.length),
+    this.activeByDate,
+    Math.max(6, this.activeByDate.length),
+  );
+  protected readonly pastSurveys = this.repeatToLength(
+    this.pastByDate,
+    Math.max(6, this.pastByDate.length),
   );
   protected readonly endingSoonSurveys = this.repeatToLength(
-    this.surveys.filter((survey) => survey.daysLeft <= 7),
+    this.activeByDate.filter((survey) => survey.daysLeft <= 7),
     3,
   );
 
