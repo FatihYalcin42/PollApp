@@ -105,14 +105,15 @@
             <textarea
               #descriptionInput
               class="description-block__input"
+              [value]="surveyDescription"
               aria-label="Describing text optional"
-              (input)="limitDescriptionLength($event)"
+              (input)="limitDescriptionLength($event); updateSurveyDescription(descriptionInput.value)"
             ></textarea>
             <button
               class="delete-button description-block__delete"
               type="button"
               aria-label="Clear description text"
-              (click)="clearField(descriptionInput)"
+              (click)="clearField(descriptionInput); updateSurveyDescription('')"
             >
               <img class="delete-button__icon" src="/assets/delete-icon.svg" alt="" />
               <img class="delete-button__icon-hover" src="/assets/delete-icon-hover.svg" alt="" />
@@ -142,8 +143,9 @@
                   #questionInput
                   class="create-survey-input question-block__input"
                   type="text"
+                  [value]="question.prompt"
                   aria-label="Question text"
-                  (input)="limitInputLength($event)"
+                  (input)="limitInputLength($event); updateQuestionPrompt(question.id, questionInput.value)"
                 />
               </div>
 
@@ -169,10 +171,12 @@
                     <div class="answer-row">
                       <span class="answer-row__label">{{ getAnswerLabel(index) }}.</span>
                       <input
+                        #answerInput
                         class="create-survey-input answer-row__input"
                         type="text"
+                        [value]="question.answers[answerIndex] ?? ''"
                         [attr.aria-label]="'Answer ' + getAnswerLabel(index)"
-                        (input)="limitInputLength($event)"
+                        (input)="limitInputLength($event); updateAnswerText(question.id, answerIndex, answerInput.value)"
                       />
                       <button
                         class="delete-button"

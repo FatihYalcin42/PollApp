@@ -11,6 +11,8 @@ type QuestionItem = {
   renderVersion: number;
   allowMultipleAnswers: boolean;
   answerFieldIndexes: number[];
+  prompt: string;
+  answers: Record<number, string>;
 };
 
 @Component({
@@ -23,6 +25,7 @@ export class CreateSurveyPage {
   protected isCategoryDropdownOpen = false;
   protected selectedCategory = 'Choose categorie';
   protected surveyTitle = '';
+  protected surveyDescription = '';
   protected endDate = '';
   protected readonly categories = [
     'Team Activities',
@@ -35,7 +38,14 @@ export class CreateSurveyPage {
   protected readonly maxAnswerFields = 6;
   protected readonly maxQuestions = 6;
   protected questions: QuestionItem[] = [
-    { id: 1, renderVersion: 0, allowMultipleAnswers: false, answerFieldIndexes: [0, 1] },
+    {
+      id: 1,
+      renderVersion: 0,
+      allowMultipleAnswers: false,
+      answerFieldIndexes: [0, 1],
+      prompt: '',
+      answers: { 0: '', 1: '' },
+    },
   ];
 
   constructor(private readonly router: Router) {
@@ -88,7 +98,14 @@ export class CreateSurveyPage {
       : 1;
     this.questions = [
       ...this.questions,
-      { id: nextId, renderVersion: 0, allowMultipleAnswers: false, answerFieldIndexes: [0, 1] },
+      {
+        id: nextId,
+        renderVersion: 0,
+        allowMultipleAnswers: false,
+        answerFieldIndexes: [0, 1],
+        prompt: '',
+        answers: { 0: '', 1: '' },
+      },
     ];
   }
 
@@ -96,8 +113,16 @@ export class CreateSurveyPage {
     if (questionIndex === 0) {
       const firstQuestion = this.questions[0];
       if (!firstQuestion) return;
+      const clearedAnswers = Object.fromEntries(
+        firstQuestion.answerFieldIndexes.map((index) => [index, '']),
+      ) as Record<number, string>;
       this.questions = [
-        { ...firstQuestion, renderVersion: firstQuestion.renderVersion + 1 },
+        {
+          ...firstQuestion,
+          prompt: '',
+          answers: clearedAnswers,
+          renderVersion: firstQuestion.renderVersion + 1,
+        },
         ...this.questions.slice(1),
       ];
       return;
@@ -115,21 +140,22 @@ export class CreateSurveyPage {
       return {
         ...question,
         answerFieldIndexes: [...question.answerFieldIndexes, nextIndex],
+        answers: { ...question.answers, [nextIndex]: '' },
       };
     });
   }
 
   protected removeAnswerField(questionId: number, answerFieldIndex: number): void {
-    this.questions = this.questions.map((question) =>
-      question.id === questionId
-        ? {
-            ...question,
-            answerFieldIndexes: question.answerFieldIndexes.filter(
-              (index) => index !== answerFieldIndex,
-            ),
-          }
-        : question,
-    );
+    this.questions = this.questions.map((question) => {
+      if (question.id !== questionId) return question;
+      const answers = { ...question.answers };
+      delete answers[answerFieldIndex];
+      return {
+        ...question,
+        answerFieldIndexes: question.answerFieldIndexes.filter((index) => index !== answerFieldIndex),
+        answers,
+      };
+    });
   }
 
   protected publishSurvey(): void {
@@ -147,8 +173,26 @@ export class CreateSurveyPage {
     this.surveyTitle = value.trim();
   }
 
+  protected updateSurveyDescription(value: string): void {
+    this.surveyDescription = value;
+  }
+
   protected updateEndDate(value: string): void {
     this.endDate = value.trim();
+  }
+
+  protected updateQuestionPrompt(questionId: number, value: string): void {
+    this.questions = this.questions.map((question) =>
+      question.id === questionId ? { ...question, prompt: value } : question,
+    );
+  }
+
+  protected updateAnswerText(questionId: number, answerFieldIndex: number, value: string): void {
+    this.questions = this.questions.map((question) =>
+      question.id === questionId
+        ? { ...question, answers: { ...question.answers, [answerFieldIndex]: value } }
+        : question,
+    );
   }
 
   protected get formattedEndDate(): string {
@@ -162,9 +206,9 @@ export class CreateSurveyPage {
       id: nextSurveyId(),
       category: this.selectedCategory === 'Choose categorie' ? 'Uncategorized' : this.selectedCategory,
       title: this.surveyTitle || 'Untitled survey',
-      description: 'This survey was created in PollApp.',
+      description: this.surveyDescription.trim() || 'This survey was created in PollApp.',
       daysLeft: this.getDaysLeft(),
-      questions: this.getDefaultQuestions(),
+      questions: this.getSurveyQuestions(),
     };
   }
 
@@ -176,16 +220,21 @@ export class CreateSurveyPage {
     return Math.ceil((end.getTime() - today.getTime()) / 86400000);
   }
 
-  private getDefaultQuestions() {
-    return [
-      {
-        id: 1,
-        prompt: 'New question',
-        hint: '',
-        allowMultiple: this.questions[0]?.allowMultipleAnswers ?? false,
-        answers: ['Option A', 'Option B'],
-      },
-    ];
+  private getSurveyQuestions() {
+    return this.questions.map((question, index) => ({
+      id: index + 1,
+      prompt: question.prompt.trim() || `Question ${index + 1}`,
+      hint: question.allowMultipleAnswers ? 'More than one answers are possible.' : '',
+      allowMultiple: question.allowMultipleAnswers,
+      answers: this.getSurveyAnswers(question.answerFieldIndexes, question.answers),
+    }));
+  }
+
+  private getSurveyAnswers(indexes: number[], answers: Record<number, string>): string[] {
+    return indexes.map((idx, pos) => {
+      const value = answers[idx]?.trim();
+      return value || `Option ${String.fromCharCode(65 + pos)}`;
+    });
   }
 
   private readAllowMultipleAnswers(): boolean {
