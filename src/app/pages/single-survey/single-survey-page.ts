@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { SURVEYS, type Survey } from '../../data/surveys';
+import { getAllSurveys } from '../../data/survey-storage';
+import { type Survey } from '../../data/surveys';
 
 type SurveyStats = { total: number; counts: Record<number, number[]> };
 type SurveyStatsStore = Record<number, SurveyStats>;
@@ -15,7 +16,7 @@ export class SingleSurveyPage {
   protected selectedAnswers: Record<number, number[]> = {};
   protected totalResponses = 0;
   protected answerCounts: Record<number, number[]> = {};
-  private readonly fallbackSurvey = SURVEYS[0];
+  private readonly fallbackSurvey = getAllSurveys()[0];
   private readonly surveyStatsKey = 'pollapp:survey-stats';
   protected survey: Survey = this.fallbackSurvey;
 
@@ -24,8 +25,9 @@ export class SingleSurveyPage {
     private readonly router: Router,
   ) {
     this.route.paramMap.subscribe((params) => {
+      const surveys = getAllSurveys();
       const id = Number(params.get('id'));
-      this.survey = SURVEYS.find((item) => item.id === id) ?? this.fallbackSurvey;
+      this.survey = surveys.find((item) => item.id === id) ?? surveys[0] ?? this.fallbackSurvey;
       this.selectedAnswers = {};
       this.loadSurveyStats();
     });

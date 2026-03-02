@@ -1,5 +1,7 @@
 import { Component, HostListener } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { addSurvey, nextSurveyId } from '../../data/survey-storage';
+import { type Survey } from '../../data/surveys';
 
 const SURVEY_SETTINGS_KEY = 'pollapp:survey-settings';
 type SurveySettings = { allowMultipleAnswers?: boolean; surveyTitle?: string };
@@ -130,11 +132,9 @@ export class CreateSurveyPage {
   }
 
   protected publishSurvey(): void {
-    this.persistSurveySettings(
-      this.questions[0]?.allowMultipleAnswers ?? false,
-      this.surveyTitle,
-    );
-    void this.router.navigate(['/single-survey']);
+    addSurvey(this.buildSurvey());
+    this.persistSurveySettings(this.questions[0]?.allowMultipleAnswers ?? false, this.surveyTitle);
+    void this.router.navigate(['/']);
   }
 
   protected getAnswerLabel(index: number): string {
@@ -153,6 +153,37 @@ export class CreateSurveyPage {
     if (!this.endDate) return '--.--.----';
     const [year, month, day] = this.endDate.split('-');
     return day && month && year ? `${day}.${month}.${year}` : '--.--.----';
+  }
+
+  private buildSurvey(): Survey {
+    return {
+      id: nextSurveyId(),
+      category: this.selectedCategory === 'Choose categorie' ? 'Uncategorized' : this.selectedCategory,
+      title: this.surveyTitle || 'Untitled survey',
+      description: 'This survey was created in PollApp.',
+      daysLeft: this.getDaysLeft(),
+      questions: this.getDefaultQuestions(),
+    };
+  }
+
+  private getDaysLeft(): number {
+    if (!this.endDate) return 30;
+    const end = new Date(`${this.endDate}T00:00:00`);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return Math.ceil((end.getTime() - today.getTime()) / 86400000);
+  }
+
+  private getDefaultQuestions() {
+    return [
+      {
+        id: 1,
+        prompt: 'New question',
+        hint: '',
+        allowMultiple: this.questions[0]?.allowMultipleAnswers ?? false,
+        answers: ['Option A', 'Option B'],
+      },
+    ];
   }
 
   private readAllowMultipleAnswers(): boolean {

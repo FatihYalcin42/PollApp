@@ -1,6 +1,7 @@
 import { Component, HostListener } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { SURVEYS, type Survey } from '../../data/surveys';
+import { getAllSurveys } from '../../data/survey-storage';
+import { type Survey } from '../../data/surveys';
 
 @Component({
   selector: 'app-home-page',
@@ -9,25 +10,16 @@ import { SURVEYS, type Survey } from '../../data/surveys';
   styleUrl: './home-page.scss',
 })
 export class HomePage {
-  private readonly surveys = SURVEYS;
+  private readonly surveys = getAllSurveys();
   protected isPastView = false;
   protected isSortMenuOpen = false;
   protected selectedSortCategory = '';
-  private readonly activeByDate = this.surveys.filter((survey) => survey.daysLeft > 0);
-  private readonly pastByDate = this.surveys.filter((survey) => survey.daysLeft <= 0);
+  private readonly activeByDate = this.sortByDays(this.surveys.filter((survey) => survey.daysLeft > 0));
+  private readonly pastByDate = this.sortByDays(this.surveys.filter((survey) => survey.daysLeft <= 0));
   protected readonly sortCategories = [...new Set(this.surveys.map((survey) => survey.category))];
-  protected readonly activeSurveys = this.repeatToLength(
-    this.activeByDate,
-    Math.max(6, this.activeByDate.length),
-  );
-  protected readonly pastSurveys = this.repeatToLength(
-    this.pastByDate,
-    Math.max(6, this.pastByDate.length),
-  );
-  protected readonly endingSoonSurveys = this.repeatToLength(
-    this.activeByDate.filter((survey) => survey.daysLeft <= 7),
-    3,
-  );
+  protected readonly activeSurveys = this.activeByDate;
+  protected readonly pastSurveys = this.pastByDate;
+  protected readonly endingSoonSurveys = this.activeByDate.slice(0, 3);
 
   @HostListener('document:click', ['$event'])
   protected closeSortMenuOnOutsideClick(event: MouseEvent): void {
@@ -41,8 +33,7 @@ export class HomePage {
     return list.filter((survey) => survey.category === this.selectedSortCategory);
   }
 
-  private repeatToLength(items: Survey[], size: number): Survey[] {
-    if (!items.length || size < 1) return [];
-    return Array.from({ length: size }, (_, i) => items[i % items.length]);
+  private sortByDays(items: Survey[]): Survey[] {
+    return [...items].sort((a, b) => a.daysLeft - b.daysLeft);
   }
 }
