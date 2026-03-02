@@ -1,3 +1,4 @@
+import { type RealtimeChannel, type RealtimePostgresChangesPayload } from '@supabase/supabase-js';
 import { type Survey, type SurveyQuestion, type SurveyStats } from '../interfaces/survey.interface';
 import { SURVEYS } from '../models/surveys.model';
 import { supabase } from './supabase-client.service';
@@ -22,8 +23,38 @@ type DbStatsRow = {
 };
 
 type LocalSurveyStatsStore = Record<number, SurveyStats>;
+type SurveyChangeListener = (surveys: Survey[]) => void;
+type SurveyStatsChangeListener = (stats: SurveyStats) => void;
 
 let hasBootstrapped = false;
+let bootstrapPromise: Promise<void> | null = null;
+const surveyListeners = new Set<SurveyChangeListener>();
+const surveyStatsListeners = new Map<number, Set<SurveyStatsChangeListener>>();
+let surveysChannel: RealtimeChannel | null = null;
+let surveyStatsChannel: RealtimeChannel | null = null;
+
+export function subscribeToSurveyChanges(listener: SurveyChangeListener): () => void {
+  surveyListeners.add(listener);
+  ensureSurveyRealtimeChannel();
+  return () => {
+    surveyListeners.delete(listener);
+    maybeRemoveSurveyRealtimeChannel();
+  };
+}
+
+export function subscribeToSurveyStats(surveyId: number, listener: SurveyStatsChangeListener): () => void {
+  const listeners = surveyStatsListeners.get(surveyId) ?? new Set<SurveyStatsChangeListener>();
+  listeners.add(listener);
+  surveyStatsListeners.set(surveyId, listeners);
+  ensureSurveyStatsRealtimeChannel();
+  return () => {
+    const current = surveyStatsListeners.get(surveyId);
+    if (!current) return;
+    current.delete(listener);
+    if (!current.size) surveyStatsListeners.delete(surveyId);
+    maybeRemoveSurveyStatsRealtimeChannel();
+  };
+}
 
 export async function getAllSurveys(): Promise<Survey[]> {
   await bootstrapStore();
@@ -41,10 +72,12 @@ export async function addSurvey(survey: Survey): Promise<void> {
   await bootstrapStore();
   if (!supabase) {
     addLocalSurvey(survey);
+    await notifySurveyListeners();
     return;
   }
   const { error } = await supabase.from('surveys').upsert(mapSurveyToDb(survey), { onConflict: 'id' });
   if (error) addLocalSurvey(survey);
+  await notifySurveyListeners();
 }
 
 export async function nextSurveyId(): Promise<number> {
@@ -77,8 +110,19 @@ export async function saveSurveyResponse(
 
 async function bootstrapStore(): Promise<void> {
   if (hasBootstrapped) return;
-  if (supabase) await migrateLocalDataToSupabase();
-  hasBootstrapped = true;
+  if (bootstrapPromise) {
+    await bootstrapPromise;
+    return;
+  }
+  bootstrapPromise = (async () => {
+    if (supabase) await migrateLocalDataToSupabase();
+    hasBootstrapped = true;
+  })();
+  try {
+    await bootstrapPromise;
+  } finally {
+    bootstrapPromise = null;
+  }
 }
 
 async function migrateLocalDataToSupabase(): Promise<void> {
@@ -110,11 +154,89 @@ async function persistSurveyStats(surveyId: number, stats: SurveyStats): Promise
   await bootstrapStore();
   if (!supabase) {
     writeLocalSurveyStats(surveyId, stats);
+    await notifySurveyStatsListeners(surveyId);
     return;
   }
   const payload = mapSurveyStatsToDb(surveyId, stats);
   const { error } = await supabase.from('survey_stats').upsert(payload, { onConflict: 'survey_id' });
   if (error) writeLocalSurveyStats(surveyId, stats);
+  await notifySurveyStatsListeners(surveyId);
+}
+
+async function notifySurveyListeners(): Promise<void> {
+  if (!surveyListeners.size) return;
+  const surveys = await getAllSurveys();
+  surveyListeners.forEach((listener) => listener(surveys));
+}
+
+async function notifySurveyStatsListeners(surveyId: number): Promise<void> {
+  const listeners = surveyStatsListeners.get(surveyId);
+  if (!listeners?.size) return;
+  const stats = await getSurveyStats(surveyId);
+  listeners.forEach((listener) => listener(stats));
+}
+
+async function notifyAllSurveyStatsListeners(): Promise<void> {
+  const surveyIds = [...surveyStatsListeners.keys()];
+  await Promise.all(surveyIds.map((surveyId) => notifySurveyStatsListeners(surveyId)));
+}
+
+function ensureSurveyRealtimeChannel(): void {
+  if (!supabase || surveysChannel || !surveyListeners.size) return;
+  surveysChannel = supabase
+    .channel('surveys-changes-channel')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'surveys' }, () => {
+      void notifySurveyListeners();
+    })
+    .subscribe();
+}
+
+function maybeRemoveSurveyRealtimeChannel(): void {
+  if (!supabase || surveyListeners.size || !surveysChannel) return;
+  void supabase.removeChannel(surveysChannel);
+  surveysChannel = null;
+}
+
+function ensureSurveyStatsRealtimeChannel(): void {
+  if (!supabase || surveyStatsChannel || !hasSurveyStatsListeners()) return;
+  surveyStatsChannel = supabase
+    .channel('survey-stats-changes-channel')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'survey_stats' }, (payload) => {
+      const surveyId = getChangedSurveyId(payload);
+      if (surveyId === null) {
+        void notifyAllSurveyStatsListeners();
+        return;
+      }
+      void notifySurveyStatsListeners(surveyId);
+    })
+    .subscribe();
+}
+
+function maybeRemoveSurveyStatsRealtimeChannel(): void {
+  if (!supabase || hasSurveyStatsListeners() || !surveyStatsChannel) return;
+  void supabase.removeChannel(surveyStatsChannel);
+  surveyStatsChannel = null;
+}
+
+function hasSurveyStatsListeners(): boolean {
+  return surveyStatsListeners.size > 0;
+}
+
+function getChangedSurveyId(payload: RealtimePostgresChangesPayload<Record<string, unknown>>): number | null {
+  const value = readPayloadValue(payload.new, 'survey_id') ?? readPayloadValue(payload.old, 'survey_id');
+  return parseNumericId(value);
+}
+
+function readPayloadValue(payload: unknown, key: string): unknown {
+  if (!payload || typeof payload !== 'object') return null;
+  return (payload as Record<string, unknown>)[key];
+}
+
+function parseNumericId(value: unknown): number | null {
+  if (typeof value === 'number' && Number.isFinite(value)) return value;
+  if (typeof value !== 'string') return null;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : null;
 }
 
 function mapDbSurveyToSurvey(row: DbSurveyRow): Survey {

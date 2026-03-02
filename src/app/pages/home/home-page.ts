@@ -1,6 +1,6 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { getAllSurveys } from '../../shared/services/survey-storage.service';
+import { getAllSurveys, subscribeToSurveyChanges } from '../../shared/services/survey-storage.service';
 import { type Survey } from '../../shared/interfaces/survey.interface';
 
 const SURVEY_CREATED_OVERLAY_KEY = 'pollapp:survey-created-overlay';
@@ -12,17 +12,26 @@ const CREATED_OVERLAY_TIMEOUT_MS = 3200;
   templateUrl: './home-page.html',
   styleUrl: './home-page.scss',
 })
-export class HomePage implements OnInit {
+export class HomePage implements OnInit, OnDestroy {
   protected isPastView = false;
   protected isSortMenuOpen = false;
   protected selectedSortCategory = '';
   protected showCreatedOverlay = false;
   protected surveys: Survey[] = [];
+  private unsubscribeSurveyChanges: (() => void) | null = null;
 
   /** Shows the "created survey" overlay once after redirect from create flow. */
   ngOnInit(): void {
+    this.unsubscribeSurveyChanges = subscribeToSurveyChanges((surveys) => {
+      this.surveys = this.sortByDays(surveys);
+    });
     void this.loadSurveys();
     this.handleCreatedOverlay();
+  }
+
+  ngOnDestroy(): void {
+    this.unsubscribeSurveyChanges?.();
+    this.unsubscribeSurveyChanges = null;
   }
 
   /** Shows the "created survey" overlay once after redirect from create flow. */

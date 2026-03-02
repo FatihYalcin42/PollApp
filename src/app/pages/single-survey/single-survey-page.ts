@@ -1,8 +1,14 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, OnDestroy } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { type Survey, type SurveyStats } from '../../shared/interfaces/survey.interface';
 import { SURVEYS } from '../../shared/models/surveys.model';
-import { getAllSurveys, getSurveyStats, saveSurveyResponse } from '../../shared/services/survey-storage.service';
+import {
+  getAllSurveys,
+  getSurveyStats,
+  saveSurveyResponse,
+  subscribeToSurveyStats,
+} from '../../shared/services/survey-storage.service';
 
 const RESULTS_MOBILE_BREAKPOINT = 740;
 
@@ -12,7 +18,7 @@ const RESULTS_MOBILE_BREAKPOINT = 740;
   templateUrl: './single-survey-page.html',
   styleUrl: './single-survey-page.scss',
 })
-export class SingleSurveyPage {
+export class SingleSurveyPage implements OnDestroy {
   protected selectedAnswers: Record<number, number[]> = {};
   protected totalResponses = 0;
   protected answerCounts: Record<number, number[]> = {};
@@ -20,6 +26,8 @@ export class SingleSurveyPage {
   protected isResultsToggleVisible = false;
   private readonly fallbackSurvey = SURVEYS[0];
   protected survey: Survey = this.fallbackSurvey;
+  private routeParamSubscription: Subscription | null = null;
+  private unsubscribeSurveyStats: (() => void) | null = null;
 
   /**
    * Loads survey data from route changes and restores persisted stats.
@@ -27,7 +35,13 @@ export class SingleSurveyPage {
    */
   constructor(private readonly route: ActivatedRoute) {
     this.updateResultsToggleVisibility();
-    this.route.paramMap.subscribe((params) => void this.loadSurveyById(params.get('id')));
+    this.routeParamSubscription = this.route.paramMap.subscribe((params) => void this.loadSurveyById(params.get('id')));
+  }
+
+  ngOnDestroy(): void {
+    this.routeParamSubscription?.unsubscribe();
+    this.routeParamSubscription = null;
+    this.unsubscribeFromSurveyStats();
   }
 
   /**
@@ -113,6 +127,7 @@ export class SingleSurveyPage {
     const surveys = await getAllSurveys();
     this.survey = surveys.find((item) => item.id === id) ?? surveys[0] ?? this.fallbackSurvey;
     this.selectedAnswers = {};
+    this.subscribeToCurrentSurveyStats();
     await this.loadSurveyStats();
   }
 
@@ -139,6 +154,16 @@ export class SingleSurveyPage {
     }
     this.isResultsToggleVisible = window.innerWidth <= RESULTS_MOBILE_BREAKPOINT;
     if (!this.isResultsToggleVisible) this.isResultsOpen = true;
+  }
+
+  private subscribeToCurrentSurveyStats(): void {
+    this.unsubscribeFromSurveyStats();
+    this.unsubscribeSurveyStats = subscribeToSurveyStats(this.survey.id, (stats) => this.applyStats(stats));
+  }
+
+  private unsubscribeFromSurveyStats(): void {
+    this.unsubscribeSurveyStats?.();
+    this.unsubscribeSurveyStats = null;
   }
 
   /** @returns Stored response total plus a projected current vote. */
