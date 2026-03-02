@@ -21,26 +21,26 @@ type DbStatsRow = {
 type SurveyChangeListener = (surveys: Survey[]) => void;
 type SurveyStatsChangeListener = (stats: SurveyStats) => void;
 
-const surveyListeners = new Set<SurveyChangeListener>();
-const surveyStatsListeners = new Map<number, Set<SurveyStatsChangeListener>>();
-let surveysChannel: RealtimeChannel | null = null;
-let surveyStatsChannel: RealtimeChannel | null = null;
+const SURVEY_LISTENERS = new Set<SurveyChangeListener>();
+const SURVEY_STATS_LISTENERS = new Map<number, Set<SurveyStatsChangeListener>>();
+let SURVEYS_CHANNEL: RealtimeChannel | null = null;
+let SURVEY_STATS_CHANNEL: RealtimeChannel | null = null;
 
 /** Registers a callback for live survey list updates. */
 export function subscribeToSurveyChanges(listener: SurveyChangeListener): () => void {
-  surveyListeners.add(listener);
+  SURVEY_LISTENERS.add(listener);
   ensureSurveyRealtimeChannel();
   return () => {
-    surveyListeners.delete(listener);
+    SURVEY_LISTENERS.delete(listener);
     maybeRemoveSurveyRealtimeChannel();
   };
 }
 
 /** Registers a callback for live stats updates of a single survey. */
 export function subscribeToSurveyStats(surveyId: number, listener: SurveyStatsChangeListener): () => void {
-  const listeners = surveyStatsListeners.get(surveyId) ?? new Set<SurveyStatsChangeListener>();
+  const listeners = SURVEY_STATS_LISTENERS.get(surveyId) ?? new Set<SurveyStatsChangeListener>();
   listeners.add(listener);
-  surveyStatsListeners.set(surveyId, listeners);
+  SURVEY_STATS_LISTENERS.set(surveyId, listeners);
   ensureSurveyStatsRealtimeChannel();
   return () => unsubscribeSurveyStatsListener(surveyId, listener);
 }
@@ -105,26 +105,26 @@ async function persistSurveyStats(surveyId: number, stats: SurveyStats): Promise
 }
 
 async function notifySurveyListeners(): Promise<void> {
-  if (!surveyListeners.size) return;
+  if (!SURVEY_LISTENERS.size) return;
   const surveys = await getAllSurveys();
-  surveyListeners.forEach((listener) => listener(surveys));
+  SURVEY_LISTENERS.forEach((listener) => listener(surveys));
 }
 
 async function notifySurveyStatsListeners(surveyId: number): Promise<void> {
-  const listeners = surveyStatsListeners.get(surveyId);
+  const listeners = SURVEY_STATS_LISTENERS.get(surveyId);
   if (!listeners?.size) return;
   const stats = await getSurveyStats(surveyId);
   listeners.forEach((listener) => listener(stats));
 }
 
 async function notifyAllSurveyStatsListeners(): Promise<void> {
-  const surveyIds = [...surveyStatsListeners.keys()];
+  const surveyIds = [...SURVEY_STATS_LISTENERS.keys()];
   await Promise.all(surveyIds.map((surveyId) => notifySurveyStatsListeners(surveyId)));
 }
 
 function ensureSurveyRealtimeChannel(): void {
-  if (!supabase || surveysChannel || !surveyListeners.size) return;
-  surveysChannel = supabase
+  if (!supabase || SURVEYS_CHANNEL || !SURVEY_LISTENERS.size) return;
+  SURVEYS_CHANNEL = supabase
     .channel('surveys-changes-channel')
     .on('postgres_changes', { event: '*', schema: 'public', table: 'surveys' }, () => {
       void notifySurveyListeners();
@@ -133,14 +133,14 @@ function ensureSurveyRealtimeChannel(): void {
 }
 
 function maybeRemoveSurveyRealtimeChannel(): void {
-  if (!supabase || surveyListeners.size || !surveysChannel) return;
-  void supabase.removeChannel(surveysChannel);
-  surveysChannel = null;
+  if (!supabase || SURVEY_LISTENERS.size || !SURVEYS_CHANNEL) return;
+  void supabase.removeChannel(SURVEYS_CHANNEL);
+  SURVEYS_CHANNEL = null;
 }
 
 function ensureSurveyStatsRealtimeChannel(): void {
-  if (!supabase || surveyStatsChannel || !hasSurveyStatsListeners()) return;
-  surveyStatsChannel = supabase
+  if (!supabase || SURVEY_STATS_CHANNEL || !hasSurveyStatsListeners()) return;
+  SURVEY_STATS_CHANNEL = supabase
     .channel('survey-stats-changes-channel')
     .on('postgres_changes', { event: '*', schema: 'public', table: 'survey_stats' }, (payload) => {
       handleSurveyStatsRealtimePayload(payload);
@@ -158,20 +158,20 @@ function handleSurveyStatsRealtimePayload(payload: RealtimePostgresChangesPayloa
 }
 
 function maybeRemoveSurveyStatsRealtimeChannel(): void {
-  if (!supabase || hasSurveyStatsListeners() || !surveyStatsChannel) return;
-  void supabase.removeChannel(surveyStatsChannel);
-  surveyStatsChannel = null;
+  if (!supabase || hasSurveyStatsListeners() || !SURVEY_STATS_CHANNEL) return;
+  void supabase.removeChannel(SURVEY_STATS_CHANNEL);
+  SURVEY_STATS_CHANNEL = null;
 }
 
 function hasSurveyStatsListeners(): boolean {
-  return surveyStatsListeners.size > 0;
+  return SURVEY_STATS_LISTENERS.size > 0;
 }
 
 function unsubscribeSurveyStatsListener(surveyId: number, listener: SurveyStatsChangeListener): void {
-  const listeners = surveyStatsListeners.get(surveyId);
+  const listeners = SURVEY_STATS_LISTENERS.get(surveyId);
   if (!listeners) return;
   listeners.delete(listener);
-  if (!listeners.size) surveyStatsListeners.delete(surveyId);
+  if (!listeners.size) SURVEY_STATS_LISTENERS.delete(surveyId);
   maybeRemoveSurveyStatsRealtimeChannel();
 }
 
