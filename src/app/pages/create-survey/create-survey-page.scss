@@ -880,6 +880,15 @@
   .description-block__input {
     width: 100%;
   }
+
+  .questions-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .questions-grid__single-action {
+    justify-content: flex-start;
+    padding-top: 0;
+  }
 }
 
 @media (max-width: 900px) {
@@ -928,15 +937,6 @@
   .create-survey-form-surface {
     min-height: 549px;
     height: auto;
-  }
-
-  .questions-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .questions-grid__single-action {
-    justify-content: flex-start;
-    padding-top: 0;
   }
 
   .answers-block__footer {
