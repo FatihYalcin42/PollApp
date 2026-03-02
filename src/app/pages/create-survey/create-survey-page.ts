@@ -149,6 +149,12 @@ export class CreateSurveyPage {
     this.endDate = value.trim();
   }
 
+  protected get formattedEndDate(): string {
+    if (!this.endDate) return '--.--.----';
+    const [year, month, day] = this.endDate.split('-');
+    return day && month && year ? `${day}.${month}.${year}` : '--.--.----';
+  }
+
   private readAllowMultipleAnswers(): boolean {
     try {
       const raw = localStorage.getItem(SURVEY_SETTINGS_KEY);
