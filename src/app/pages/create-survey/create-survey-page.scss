@@ -976,3 +976,268 @@
     align-items: flex-start;
   }
 }
+
+@media (max-width: 500px) {
+  .create-survey-page {
+    justify-content: flex-start;
+    padding: 0;
+    overflow-x: hidden;
+  }
+
+  .create-survey-canvas {
+    width: 100%;
+    max-width: none;
+    min-height: 100dvh;
+    gap: 28px;
+    padding: 18px 0 28px;
+    border: 0;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 100px;
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+  }
+
+  .create-survey-header {
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 0 16px;
+  }
+
+  .create-survey-header__left {
+    width: auto;
+  }
+
+  .create-survey-title {
+    max-width: 220px;
+    font-size: 54px;
+    line-height: 0.92;
+  }
+
+  .cancel-button {
+    width: 24px;
+    height: 24px;
+    justify-content: center;
+    padding: 0;
+    border-radius: 6px;
+  }
+
+  .cancel-button__text {
+    display: none;
+  }
+
+  .cancel-button__icon {
+    width: 12px;
+    height: 12px;
+  }
+
+  .create-survey-form-surface {
+    width: calc(100% - 40px);
+    max-width: none;
+    min-height: 0;
+    gap: 22px;
+    margin: 0 auto;
+    padding: 20px 12px;
+    border-top-right-radius: 48px;
+  }
+
+  .create-survey-top-row {
+    gap: 18px;
+  }
+
+  .create-survey-inputs {
+    gap: 10px;
+  }
+
+  .create-survey-input-group {
+    position: relative;
+    gap: 8px;
+  }
+
+  .create-survey-field-title,
+  .description-block__title {
+    padding-right: 36px;
+  }
+
+  .create-survey-input {
+    width: 100%;
+    max-width: none;
+  }
+
+  .create-survey-input-group > .create-survey-input-row {
+    display: block;
+    width: 100%;
+  }
+
+  .create-survey-input-group > .create-survey-input-row > .delete-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+
+  .create-survey-input-row--split {
+    width: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .create-survey-input-row__left {
+    position: relative;
+    width: 100%;
+    display: block;
+  }
+
+  .create-survey-input-row__left .create-survey-input--short {
+    width: 100%;
+  }
+
+  .create-survey-input-row__left .delete-button {
+    position: absolute;
+    top: -34px;
+    right: 0;
+  }
+
+  .category-dropdown {
+    width: 100%;
+  }
+
+  .description-block {
+    width: 100%;
+    position: relative;
+    gap: 8px;
+  }
+
+  .description-block__input-row {
+    position: relative;
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .description-block__delete {
+    position: absolute;
+    top: -34px;
+    right: 0;
+    margin-top: 0;
+  }
+
+  .description-block__input {
+    width: 100%;
+    height: 92px;
+  }
+
+  .questions-section {
+    gap: 18px;
+  }
+
+  .questions-grid {
+    gap: 22px;
+  }
+
+  .question-block__delete {
+    top: -34px;
+    right: 0;
+  }
+
+  .answers-block {
+    margin-top: 10px;
+    gap: 10px;
+  }
+
+  .answers-block__header {
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .answers-toggle__text {
+    font-size: 10px;
+    line-height: 1.15;
+    text-align: right;
+    white-space: normal;
+  }
+
+  .answers-block__list {
+    max-height: none;
+    overflow: visible;
+    padding-right: 0;
+  }
+
+  .answer-row {
+    width: 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 26px;
+    grid-template-areas:
+      'label delete'
+      'input input';
+    align-items: center;
+    row-gap: 8px;
+    column-gap: 10px;
+  }
+
+  .answer-row__label {
+    grid-area: label;
+    width: auto;
+    flex: 0 0 auto;
+  }
+
+  .answer-row__input {
+    grid-area: input;
+    width: 100%;
+  }
+
+  .answer-row .delete-button {
+    grid-area: delete;
+    justify-self: end;
+  }
+
+  .answers-block__footer {
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .add-answer-button__hint {
+    display: none;
+  }
+
+  .questions-grid__single-action,
+  .questions-section__actions {
+    justify-content: center;
+    padding-top: 0;
+  }
+
+  .create-survey-footer {
+    margin-top: auto;
+    justify-content: center;
+    padding: 0 16px;
+  }
+
+  .create-survey-footer__actions {
+    align-items: center;
+    gap: 0;
+  }
+
+  .create-survey-end-date {
+    display: none;
+  }
+
+  .create-survey-submit-button,
+  .create-survey-submit-button:hover,
+  .create-survey-submit-button:focus-visible {
+    width: 127px;
+    justify-content: center;
+    background: #ffcfa1;
+  }
+
+  .create-survey-submit-button__icon,
+  .create-survey-submit-button:hover .create-survey-submit-button__icon,
+  .create-survey-submit-button:focus-visible .create-survey-submit-button__icon {
+    width: 18px;
+    margin-left: 2px;
+    opacity: 1;
+  }
+}
