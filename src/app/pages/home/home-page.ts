@@ -27,6 +27,7 @@ export class HomePage implements OnInit, OnDestroy {
     void this.loadSurveys();
   }
 
+  /** Cleans up active realtime subscriptions when leaving the page. */
   ngOnDestroy(): void {
     this.unsubscribeSurveyChanges?.();
     this.unsubscribeSurveyChanges = null;

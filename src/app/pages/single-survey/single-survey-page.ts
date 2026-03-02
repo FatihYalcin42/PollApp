@@ -39,6 +39,7 @@ export class SingleSurveyPage implements OnDestroy {
     this.routeParamSubscription = this.route.paramMap.subscribe((params) => void this.loadSurveyById(params.get('id')));
   }
 
+  /** Cleans up route and realtime subscriptions when leaving the page. */
   ngOnDestroy(): void {
     this.routeParamSubscription?.unsubscribe();
     this.routeParamSubscription = null;
@@ -165,6 +166,7 @@ export class SingleSurveyPage implements OnDestroy {
     if (!this.isResultsToggleVisible) this.isResultsOpen = true;
   }
 
+  /** Subscribes to realtime stats updates for the currently loaded survey. */
   private subscribeToCurrentSurveyStats(): void {
     this.unsubscribeFromSurveyStats();
     if (!this.survey) return;
@@ -174,11 +176,13 @@ export class SingleSurveyPage implements OnDestroy {
     });
   }
 
+  /** Unsubscribes from the active survey stats realtime listener. */
   private unsubscribeFromSurveyStats(): void {
     this.unsubscribeSurveyStats?.();
     this.unsubscribeSurveyStats = null;
   }
 
+  /** Clears component state if no matching survey could be resolved. */
   private clearStateForMissingSurvey(): void {
     this.survey = null;
     this.selectedAnswers = {};

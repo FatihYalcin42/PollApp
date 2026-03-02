@@ -96,6 +96,11 @@ export async function saveSurveyResponse(
   return next;
 }
 
+/**
+ * Writes the latest stats snapshot for one survey to Supabase.
+ * @param surveyId Survey id.
+ * @param stats Stats snapshot.
+ */
 async function persistSurveyStats(surveyId: number, stats: SurveyStats): Promise<void> {
   if (!supabase) return;
   const payload = mapSurveyStatsToDb(surveyId, stats);
@@ -104,12 +109,17 @@ async function persistSurveyStats(surveyId: number, stats: SurveyStats): Promise
   await notifySurveyStatsListeners(surveyId);
 }
 
+/** Reloads all surveys and emits them to active list listeners. */
 async function notifySurveyListeners(): Promise<void> {
   if (!SURVEY_LISTENERS.size) return;
   const surveys = await getAllSurveys();
   SURVEY_LISTENERS.forEach((listener) => listener(surveys));
 }
 
+/**
+ * Reloads one survey stats row and emits it to listeners of that survey id.
+ * @param surveyId Survey id.
+ */
 async function notifySurveyStatsListeners(surveyId: number): Promise<void> {
   const listeners = SURVEY_STATS_LISTENERS.get(surveyId);
   if (!listeners?.size) return;
@@ -117,11 +127,13 @@ async function notifySurveyStatsListeners(surveyId: number): Promise<void> {
   listeners.forEach((listener) => listener(stats));
 }
 
+/** Notifies all registered survey stats listeners across all survey ids. */
 async function notifyAllSurveyStatsListeners(): Promise<void> {
   const surveyIds = [...SURVEY_STATS_LISTENERS.keys()];
   await Promise.all(surveyIds.map((surveyId) => notifySurveyStatsListeners(surveyId)));
 }
 
+/** Creates the realtime channel for survey table changes when needed. */
 function ensureSurveyRealtimeChannel(): void {
   if (!supabase || SURVEYS_CHANNEL || !SURVEY_LISTENERS.size) return;
   SURVEYS_CHANNEL = supabase
@@ -132,12 +144,14 @@ function ensureSurveyRealtimeChannel(): void {
     .subscribe();
 }
 
+/** Removes the survey realtime channel if no survey listeners remain. */
 function maybeRemoveSurveyRealtimeChannel(): void {
   if (!supabase || SURVEY_LISTENERS.size || !SURVEYS_CHANNEL) return;
   void supabase.removeChannel(SURVEYS_CHANNEL);
   SURVEYS_CHANNEL = null;
 }
 
+/** Creates the realtime channel for survey stats changes when needed. */
 function ensureSurveyStatsRealtimeChannel(): void {
   if (!supabase || SURVEY_STATS_CHANNEL || !hasSurveyStatsListeners()) return;
   SURVEY_STATS_CHANNEL = supabase
@@ -148,6 +162,10 @@ function ensureSurveyStatsRealtimeChannel(): void {
     .subscribe();
 }
 
+/**
+ * Routes one realtime stats payload to either one survey listener set or all sets.
+ * @param payload Realtime postgres change payload.
+ */
 function handleSurveyStatsRealtimePayload(payload: RealtimePostgresChangesPayload<Record<string, unknown>>): void {
   const surveyId = getChangedSurveyId(payload);
   if (surveyId === null) {
@@ -157,16 +175,23 @@ function handleSurveyStatsRealtimePayload(payload: RealtimePostgresChangesPayloa
   void notifySurveyStatsListeners(surveyId);
 }
 
+/** Removes the survey stats realtime channel if no listeners remain. */
 function maybeRemoveSurveyStatsRealtimeChannel(): void {
   if (!supabase || hasSurveyStatsListeners() || !SURVEY_STATS_CHANNEL) return;
   void supabase.removeChannel(SURVEY_STATS_CHANNEL);
   SURVEY_STATS_CHANNEL = null;
 }
 
+/** @returns True when at least one survey stats listener is registered. */
 function hasSurveyStatsListeners(): boolean {
   return SURVEY_STATS_LISTENERS.size > 0;
 }
 
+/**
+ * Unregisters one listener from one survey stats channel.
+ * @param surveyId Survey id.
+ * @param listener Listener callback.
+ */
 function unsubscribeSurveyStatsListener(surveyId: number, listener: SurveyStatsChangeListener): void {
   const listeners = SURVEY_STATS_LISTENERS.get(surveyId);
   if (!listeners) return;
@@ -175,16 +200,32 @@ function unsubscribeSurveyStatsListener(surveyId: number, listener: SurveyStatsC
   maybeRemoveSurveyStatsRealtimeChannel();
 }
 
+/**
+ * Extracts survey id from realtime payload new/old record.
+ * @param payload Realtime postgres change payload.
+ * @returns Parsed survey id or null.
+ */
 function getChangedSurveyId(payload: RealtimePostgresChangesPayload<Record<string, unknown>>): number | null {
   const value = readPayloadValue(payload.new, 'survey_id') ?? readPayloadValue(payload.old, 'survey_id');
   return parseNumericId(value);
 }
 
+/**
+ * Safely reads one value from an unknown payload object.
+ * @param payload Unknown payload object.
+ * @param key Field key.
+ * @returns Field value or null.
+ */
 function readPayloadValue(payload: unknown, key: string): unknown {
   if (!payload || typeof payload !== 'object') return null;
   return (payload as Record<string, unknown>)[key];
 }
 
+/**
+ * Parses a numeric id from unknown input.
+ * @param value Unknown payload value.
+ * @returns Number id or null.
+ */
 function parseNumericId(value: unknown): number | null {
   if (typeof value === 'number' && Number.isFinite(value)) return value;
   if (typeof value !== 'string') return null;
@@ -192,6 +233,11 @@ function parseNumericId(value: unknown): number | null {
   return Number.isFinite(parsed) ? parsed : null;
 }
 
+/**
+ * Maps one database survey row to app survey model.
+ * @param row Database survey row.
+ * @returns App survey object.
+ */
 function mapDbSurveyToSurvey(row: DbSurveyRow): Survey {
   return {
     id: row.id,
@@ -203,6 +249,11 @@ function mapDbSurveyToSurvey(row: DbSurveyRow): Survey {
   };
 }
 
+/**
+ * Maps one app survey object to database payload shape.
+ * @param survey App survey object.
+ * @returns Database survey row payload.
+ */
 function mapSurveyToDb(survey: Survey): DbSurveyRow {
   return {
     id: survey.id,
@@ -214,6 +265,11 @@ function mapSurveyToDb(survey: Survey): DbSurveyRow {
   };
 }
 
+/**
+ * Maps one database stats row to app stats object.
+ * @param row Database stats row.
+ * @returns App survey stats.
+ */
 function mapDbStatsToSurveyStats(row: DbStatsRow): SurveyStats {
   return {
     total: row.total_responses,
@@ -221,6 +277,12 @@ function mapDbStatsToSurveyStats(row: DbStatsRow): SurveyStats {
   };
 }
 
+/**
+ * Maps app stats object to database stats payload.
+ * @param surveyId Survey id.
+ * @param stats App survey stats.
+ * @returns Database stats row payload.
+ */
 function mapSurveyStatsToDb(surveyId: number, stats: SurveyStats): DbStatsRow {
   return {
     survey_id: surveyId,
@@ -229,6 +291,13 @@ function mapSurveyStatsToDb(surveyId: number, stats: SurveyStats): DbStatsRow {
   };
 }
 
+/**
+ * Applies one submitted vote set to current stats.
+ * @param current Current stats snapshot.
+ * @param questions Survey questions.
+ * @param selectedAnswers Selected answer indices per question id.
+ * @returns Updated stats snapshot.
+ */
 function applySurveyVote(
   current: SurveyStats,
   questions: SurveyQuestion[],
@@ -239,6 +308,12 @@ function applySurveyVote(
   return { total: current.total + 1, counts };
 }
 
+/**
+ * Adds selected votes for one question into stats counts.
+ * @param counts Mutable stats counts.
+ * @param selectedAnswers Selected answer indices per question id.
+ * @param question Survey question.
+ */
 function addVotes(
   counts: Record<number, number[]>,
   selectedAnswers: Record<number, number[]>,
@@ -250,11 +325,21 @@ function addVotes(
   counts[question.id] = values;
 }
 
+/**
+ * Increments one answer index in a vote array.
+ * @param values Vote array.
+ * @param index Answer index.
+ */
 function incrementVote(values: number[], index: number): void {
   if (index < 0 || index >= values.length) return;
   values[index] += 1;
 }
 
+/**
+ * Deep clones stats counts object for immutable updates.
+ * @param counts Stats counts object.
+ * @returns Cloned stats counts.
+ */
 function cloneStatsCounts(counts: Record<number, number[]>): Record<number, number[]> {
   return Object.fromEntries(Object.entries(counts).map(([key, values]) => [Number(key), [...values]])) as Record<
     number,
@@ -262,6 +347,11 @@ function cloneStatsCounts(counts: Record<number, number[]>): Record<number, numb
   >;
 }
 
+/**
+ * Normalizes database jsonb keys to numeric question ids.
+ * @param counts Database stats counts object.
+ * @returns Normalized app stats counts.
+ */
 function normalizeStatsCounts(counts: Record<string, number[]>): Record<number, number[]> {
   return Object.fromEntries(Object.entries(counts).map(([key, values]) => [Number(key), values])) as Record<
     number,
@@ -269,10 +359,16 @@ function normalizeStatsCounts(counts: Record<string, number[]>): Record<number, 
   >;
 }
 
+/**
+ * Converts numeric question id keys to string keys for jsonb storage.
+ * @param counts App stats counts object.
+ * @returns Database-ready json object.
+ */
 function toDbStatsCounts(counts: Record<number, number[]>): Record<string, number[]> {
   return Object.fromEntries(Object.entries(counts).map(([key, values]) => [String(key), values]));
 }
 
+/** @returns Empty stats object with no responses and no vote counts. */
 function createEmptySurveyStats(): SurveyStats {
   return {
     total: 0,
