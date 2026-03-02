@@ -293,6 +293,11 @@
   justify-content: start;
 }
 
+.highlight-card-item,
+.list-card-item {
+  margin: 0;
+}
+
 .highlight-card {
   width: 321px;
   height: 310px;
@@ -672,7 +677,7 @@
     scroll-snap-type: x proximity;
   }
 
-  .highlight-card {
+  .highlight-card-item {
     flex: 0 0 321px;
     scroll-snap-align: start;
   }
@@ -773,9 +778,13 @@
     justify-content: flex-start;
   }
 
-  .highlight-card {
+  .highlight-card-item {
     width: min(88vw, 321px);
     flex-basis: min(88vw, 321px);
+  }
+
+  .highlight-card {
+    width: 100%;
   }
 
   .list-cards {
