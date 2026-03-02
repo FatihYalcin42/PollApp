@@ -1,4 +1,4 @@
-import { Component, HostListener, OnDestroy } from '@angular/core';
+import { ChangeDetectorRef, Component, HostListener, OnDestroy } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { type Survey, type SurveyStats } from '../../shared/interfaces/survey.interface';
@@ -33,7 +33,10 @@ export class SingleSurveyPage implements OnDestroy {
    * Loads survey data from route changes and restores persisted stats.
    * @param route Activated route instance.
    */
-  constructor(private readonly route: ActivatedRoute) {
+  constructor(
+    private readonly route: ActivatedRoute,
+    private readonly cdr: ChangeDetectorRef,
+  ) {
     this.updateResultsToggleVisibility();
     this.routeParamSubscription = this.route.paramMap.subscribe((params) => void this.loadSurveyById(params.get('id')));
   }
@@ -129,6 +132,7 @@ export class SingleSurveyPage implements OnDestroy {
     this.selectedAnswers = {};
     this.subscribeToCurrentSurveyStats();
     await this.loadSurveyStats();
+    this.cdr.detectChanges();
   }
 
   /** Loads persisted stats for the currently open survey. */
@@ -158,7 +162,10 @@ export class SingleSurveyPage implements OnDestroy {
 
   private subscribeToCurrentSurveyStats(): void {
     this.unsubscribeFromSurveyStats();
-    this.unsubscribeSurveyStats = subscribeToSurveyStats(this.survey.id, (stats) => this.applyStats(stats));
+    this.unsubscribeSurveyStats = subscribeToSurveyStats(this.survey.id, (stats) => {
+      this.applyStats(stats);
+      this.cdr.detectChanges();
+    });
   }
 
   private unsubscribeFromSurveyStats(): void {

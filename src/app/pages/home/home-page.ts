@@ -1,4 +1,4 @@
-import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { getAllSurveys, subscribeToSurveyChanges } from '../../shared/services/survey-storage.service';
 import { type Survey } from '../../shared/interfaces/survey.interface';
@@ -20,10 +20,13 @@ export class HomePage implements OnInit, OnDestroy {
   protected surveys: Survey[] = [];
   private unsubscribeSurveyChanges: (() => void) | null = null;
 
+  constructor(private readonly cdr: ChangeDetectorRef) {}
+
   /** Shows the "created survey" overlay once after redirect from create flow. */
   ngOnInit(): void {
     this.unsubscribeSurveyChanges = subscribeToSurveyChanges((surveys) => {
       this.surveys = this.sortByDays(surveys);
+      this.cdr.detectChanges();
     });
     void this.loadSurveys();
     this.handleCreatedOverlay();
@@ -45,6 +48,7 @@ export class HomePage implements OnInit, OnDestroy {
   /** Loads surveys from configured storage backend. */
   private async loadSurveys(): Promise<void> {
     this.surveys = this.sortByDays(await getAllSurveys());
+    this.cdr.detectChanges();
   }
 
   /** Closes the created-survey overlay manually. */
