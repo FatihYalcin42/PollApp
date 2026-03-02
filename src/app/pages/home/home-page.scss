@@ -644,8 +644,21 @@
   }
 
   .highlight-cards {
-    grid-template-columns: repeat(2, 321px);
-    justify-content: center;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow-x: auto;
+    overflow-y: hidden;
+    width: 100%;
+    padding-bottom: 8px;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+  }
+
+  .highlight-card {
+    flex: 0 0 321px;
+    scroll-snap-align: start;
   }
 
   .list-cards {
@@ -660,12 +673,12 @@
 
 @media (max-width: 760px) {
   .highlight-cards {
-    grid-template-columns: 1fr;
-    justify-items: center;
+    justify-content: flex-start;
   }
 
   .highlight-card {
-    width: min(100%, 321px);
+    width: min(88vw, 321px);
+    flex-basis: min(88vw, 321px);
   }
 
   .list-cards {
