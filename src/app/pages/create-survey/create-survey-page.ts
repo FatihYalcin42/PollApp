@@ -1,7 +1,7 @@
 import { Component, HostListener } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { addSurvey, nextSurveyId } from '../../data/survey-storage';
-import { type Survey } from '../../data/surveys';
+import { addSurvey, nextSurveyId } from '../../shared/services/survey-storage.service';
+import { type Survey } from '../../shared/interfaces/survey.interface';
 
 const SURVEY_SETTINGS_KEY = 'pollapp:survey-settings';
 const SURVEY_CREATED_OVERLAY_KEY = 'pollapp:survey-created-overlay';

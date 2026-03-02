@@ -1,19 +1,4 @@
-export type SurveyQuestion = {
-  id: number;
-  prompt: string;
-  hint: string;
-  allowMultiple: boolean;
-  answers: string[];
-};
-
-export type Survey = {
-  id: number;
-  category: string;
-  title: string;
-  description: string;
-  daysLeft: number;
-  questions: SurveyQuestion[];
-};
+import { type Survey } from '../interfaces/survey.interface';
 
 export const SURVEYS: Survey[] = [
   {

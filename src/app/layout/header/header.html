@@ -1,0 +1,7 @@
+<header class="app-header" aria-label="App header">
+  <img class="app-header__logo" [src]="logoSrc" [alt]="logoAlt" />
+
+  @if (showAction) {
+    <button class="app-header__action" type="button" [routerLink]="actionRoute">{{ actionLabel }}</button>
+  }
+</header>

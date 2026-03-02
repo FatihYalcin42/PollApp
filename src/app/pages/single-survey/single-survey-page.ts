@@ -1,7 +1,7 @@
 import { Component, HostListener } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { getAllSurveys } from '../../data/survey-storage';
-import { type Survey } from '../../data/surveys';
+import { getAllSurveys } from '../../shared/services/survey-storage.service';
+import { type Survey } from '../../shared/interfaces/survey.interface';
 
 type SurveyStats = { total: number; counts: Record<number, number[]> };
 type SurveyStatsStore = Record<number, SurveyStats>;

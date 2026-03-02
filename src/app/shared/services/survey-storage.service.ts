@@ -1,4 +1,5 @@
-import { SURVEYS, type Survey } from './surveys';
+import { type Survey } from '../interfaces/survey.interface';
+import { SURVEYS } from '../models/surveys.model';
 
 const CREATED_SURVEYS_KEY = 'pollapp:created-surveys';
 
