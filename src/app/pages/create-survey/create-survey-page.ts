@@ -94,41 +94,16 @@ export class CreateSurveyPage {
 
   protected addQuestion(): void {
     if (this.questions.length >= this.maxQuestions) return;
-    const nextId = this.questions.length
-      ? Math.max(...this.questions.map((question) => question.id)) + 1
-      : 1;
-    this.questions = [
-      ...this.questions,
-      {
-        id: nextId,
-        renderVersion: 0,
-        allowMultipleAnswers: false,
-        answerFieldIndexes: [0, 1],
-        prompt: '',
-        answers: { 0: '', 1: '' },
-      },
-    ];
+    const nextId = this.getNextQuestionId();
+    this.questions = [...this.questions, this.createQuestionItem(nextId)];
   }
 
   protected handleQuestionDelete(questionIndex: number): void {
-    if (questionIndex === 0) {
-      const firstQuestion = this.questions[0];
-      if (!firstQuestion) return;
-      const clearedAnswers = Object.fromEntries(
-        firstQuestion.answerFieldIndexes.map((index) => [index, '']),
-      ) as Record<number, string>;
-      this.questions = [
-        {
-          ...firstQuestion,
-          prompt: '',
-          answers: clearedAnswers,
-          renderVersion: firstQuestion.renderVersion + 1,
-        },
-        ...this.questions.slice(1),
-      ];
+    if (questionIndex !== 0) {
+      this.questions = this.questions.filter((_, index) => index !== questionIndex);
       return;
     }
-    this.questions = this.questions.filter((_, index) => index !== questionIndex);
+    this.resetFirstQuestion();
   }
 
   protected addAnswerField(questionId: number): void {
@@ -272,6 +247,43 @@ export class CreateSurveyPage {
       SURVEY_SETTINGS_KEY,
       JSON.stringify({ allowMultipleAnswers, surveyTitle: title }),
     );
+  }
+
+  private getNextQuestionId(): number {
+    if (!this.questions.length) return 1;
+    return Math.max(...this.questions.map((question) => question.id)) + 1;
+  }
+
+  private createQuestionItem(id: number): QuestionItem {
+    return {
+      id,
+      renderVersion: 0,
+      allowMultipleAnswers: false,
+      answerFieldIndexes: [0, 1],
+      prompt: '',
+      answers: { 0: '', 1: '' },
+    };
+  }
+
+  private resetFirstQuestion(): void {
+    const firstQuestion = this.questions[0];
+    if (!firstQuestion) return;
+    this.questions = [
+      {
+        ...firstQuestion,
+        prompt: '',
+        answers: this.getClearedAnswers(firstQuestion),
+        renderVersion: firstQuestion.renderVersion + 1,
+      },
+      ...this.questions.slice(1),
+    ];
+  }
+
+  private getClearedAnswers(question: QuestionItem): Record<number, string> {
+    return Object.fromEntries(question.answerFieldIndexes.map((index) => [index, ''])) as Record<
+      number,
+      string
+    >;
   }
 
   private hasValidRequiredFields(): boolean {
