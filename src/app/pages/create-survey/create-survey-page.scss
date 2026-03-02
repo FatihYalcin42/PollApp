@@ -859,6 +859,29 @@
   color: #fefdff;
 }
 
+@media (max-width: 1100px) {
+  .create-survey-top-row {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .create-survey-inputs {
+    width: 100%;
+  }
+
+  .description-block {
+    width: 100%;
+  }
+
+  .description-block__input-row {
+    width: 100%;
+  }
+
+  .description-block__input {
+    width: 100%;
+  }
+}
+
 @media (max-width: 900px) {
   .create-survey-header {
     align-items: flex-start;
