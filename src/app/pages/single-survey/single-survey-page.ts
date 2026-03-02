@@ -22,6 +22,10 @@ export class SingleSurveyPage {
   private readonly surveyStatsKey = 'pollapp:survey-stats';
   protected survey: Survey = this.fallbackSurvey;
 
+  /**
+   * Loads survey data from route changes and restores persisted stats.
+   * @param route Activated route instance.
+   */
   constructor(private readonly route: ActivatedRoute) {
     this.updateResultsToggleVisibility();
     this.route.paramMap.subscribe((params) => {
@@ -33,6 +37,11 @@ export class SingleSurveyPage {
     });
   }
 
+  /**
+   * Toggles an answer selection for a specific question.
+   * @param questionId Question id.
+   * @param answerIndex Answer index.
+   */
   protected toggleAnswer(questionId: number, answerIndex: number): void {
     const question = this.survey.questions.find((item) => item.id === questionId);
     if (!question) return;
@@ -45,20 +54,38 @@ export class SingleSurveyPage {
     this.selectedAnswers = { ...this.selectedAnswers, [questionId]: next };
   }
 
+  /**
+   * Checks whether an answer is currently selected.
+   * @param questionId Question id.
+   * @param answerIndex Answer index.
+   * @returns True if selected.
+   */
   protected isAnswerSelected(questionId: number, answerIndex: number): boolean {
     return (this.selectedAnswers[questionId] ?? []).includes(answerIndex);
   }
 
+  /**
+   * Converts an answer index to alphabetical label.
+   * @param index Zero-based answer index.
+   * @returns Letter label.
+   */
   protected getAnswerLabel(index: number): string {
     return String.fromCharCode(65 + index);
   }
 
+  /** Persists current selections as one response and clears the current selection. */
   protected completeSurvey(): void {
     if (!this.hasSelections()) return;
     this.saveSurveyResponse();
     this.selectedAnswers = {};
   }
 
+  /**
+   * Calculates projected percentage including current unsaved selection.
+   * @param questionId Question id.
+   * @param answerIndex Answer index.
+   * @returns Rounded percentage value.
+   */
   protected getResultPercent(questionId: number, answerIndex: number): number {
     const total = this.getProjectedTotalResponses();
     if (!total) return 0;
@@ -66,20 +93,24 @@ export class SingleSurveyPage {
     return Math.round((votes / total) * 100);
   }
 
+  /** Toggles results accordion in responsive mode. */
   protected toggleResults(): void {
     if (!this.isResultsToggleVisible) return;
     this.isResultsOpen = !this.isResultsOpen;
   }
 
+  /** Re-evaluates result panel behavior on viewport resize. */
   @HostListener('window:resize')
   protected onWindowResize(): void {
     this.updateResultsToggleVisibility();
   }
 
+  /** @returns True when at least one answer is selected. */
   private hasSelections(): boolean {
     return Object.values(this.selectedAnswers).some((ids) => ids.length > 0);
   }
 
+  /** Saves one completed response to local storage and updates in-memory counters. */
   private saveSurveyResponse(): void {
     const store = this.readSurveyStats();
     const current = store[this.survey.id] ?? { total: 0, counts: {} };
@@ -91,6 +122,12 @@ export class SingleSurveyPage {
     this.totalResponses = current.total;
   }
 
+  /**
+   * Applies selected votes of one question to stats counters.
+   * @param stats Mutable stats object.
+   * @param questionId Question id.
+   * @param answerCount Number of answers in this question.
+   */
   private addVotes(stats: SurveyStats, questionId: number, answerCount: number): void {
     const selected = this.selectedAnswers[questionId] ?? [];
     const counts = stats.counts[questionId] ?? Array(answerCount).fill(0);
@@ -100,12 +137,14 @@ export class SingleSurveyPage {
     stats.counts[questionId] = counts;
   }
 
+  /** Loads persisted stats for the currently open survey. */
   private loadSurveyStats(): void {
     const stats = this.readSurveyStats()[this.survey.id];
     this.answerCounts = stats?.counts ?? {};
     this.totalResponses = stats?.total ?? 0;
   }
 
+  /** @returns Stored survey statistics map from local storage. */
   private readSurveyStats(): SurveyStatsStore {
     try {
       const raw = localStorage.getItem(this.surveyStatsKey);
@@ -115,6 +154,7 @@ export class SingleSurveyPage {
     }
   }
 
+  /** Updates mobile visibility and open state of the results panel. */
   private updateResultsToggleVisibility(): void {
     if (typeof window === 'undefined') {
       this.isResultsToggleVisible = false;
@@ -125,10 +165,17 @@ export class SingleSurveyPage {
     if (!this.isResultsToggleVisible) this.isResultsOpen = true;
   }
 
+  /** @returns Stored response total plus a projected current vote. */
   private getProjectedTotalResponses(): number {
     return this.totalResponses + (this.hasSelections() ? 1 : 0);
   }
 
+  /**
+   * Calculates projected vote count including current unsaved selection.
+   * @param questionId Question id.
+   * @param answerIndex Answer index.
+   * @returns Projected vote count.
+   */
   private getProjectedVotes(questionId: number, answerIndex: number): number {
     const baseVotes = this.answerCounts[questionId]?.[answerIndex] ?? 0;
     const selected = this.selectedAnswers[questionId] ?? [];

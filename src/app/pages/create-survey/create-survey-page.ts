@@ -53,10 +53,15 @@ export class CreateSurveyPage {
     this.questions[0].allowMultipleAnswers = this.readAllowMultipleAnswers();
   }
 
+  /** Toggles the category dropdown state. */
   protected toggleCategoryDropdown(): void {
     this.isCategoryDropdownOpen = !this.isCategoryDropdownOpen;
   }
 
+  /**
+   * Closes the category dropdown when the click is outside of it.
+   * @param event Native click event.
+   */
   @HostListener('document:click', ['$event'])
   protected closeCategoryDropdownOnOutsideClick(event: MouseEvent): void {
     if (!this.isCategoryDropdownOpen) return;
@@ -64,15 +69,28 @@ export class CreateSurveyPage {
     if (!target?.closest('.category-dropdown')) this.isCategoryDropdownOpen = false;
   }
 
+  /**
+   * Selects a category and closes the dropdown.
+   * @param category Selected category label.
+   */
   protected selectCategory(category: string): void {
     this.selectedCategory = category;
     this.isCategoryDropdownOpen = false;
   }
 
+  /**
+   * Clears a form field value.
+   * @param control Input or textarea element.
+   */
   protected clearField(control: HTMLInputElement | HTMLTextAreaElement): void {
     control.value = '';
   }
 
+  /**
+   * Updates whether a question allows multiple answers.
+   * @param questionId Target question id.
+   * @param event Checkbox change event.
+   */
   protected onAllowMultipleAnswersChange(questionId: number, event: Event): void {
     const input = event.target as HTMLInputElement;
     this.questions = this.questions.map((question) =>
@@ -82,22 +100,35 @@ export class CreateSurveyPage {
     );
   }
 
+  /**
+   * Limits input fields to 60 characters.
+   * @param event Input event.
+   */
   protected limitInputLength(event: Event): void {
     const input = event.target as HTMLInputElement;
     input.value = input.value.slice(0, 60);
   }
 
+  /**
+   * Limits description fields to 160 characters.
+   * @param event Input event.
+   */
   protected limitDescriptionLength(event: Event): void {
     const textarea = event.target as HTMLTextAreaElement;
     textarea.value = textarea.value.slice(0, 160);
   }
 
+  /** Adds a new question until the configured max is reached. */
   protected addQuestion(): void {
     if (this.questions.length >= this.maxQuestions) return;
     const nextId = this.getNextQuestionId();
     this.questions = [...this.questions, this.createQuestionItem(nextId)];
   }
 
+  /**
+   * Deletes a question by index or resets the first question.
+   * @param questionIndex Index of the question in the list.
+   */
   protected handleQuestionDelete(questionIndex: number): void {
     if (questionIndex !== 0) {
       this.questions = this.questions.filter((_, index) => index !== questionIndex);
@@ -106,6 +137,10 @@ export class CreateSurveyPage {
     this.resetFirstQuestion();
   }
 
+  /**
+   * Adds one answer field to a question.
+   * @param questionId Target question id.
+   */
   protected addAnswerField(questionId: number): void {
     this.questions = this.questions.map((question) => {
       if (question.id !== questionId) return question;
@@ -121,6 +156,11 @@ export class CreateSurveyPage {
     });
   }
 
+  /**
+   * Removes an answer field from a question.
+   * @param questionId Target question id.
+   * @param answerFieldIndex Answer index to remove.
+   */
   protected removeAnswerField(questionId: number, answerFieldIndex: number): void {
     this.questions = this.questions.map((question) => {
       if (question.id !== questionId) return question;
@@ -134,6 +174,7 @@ export class CreateSurveyPage {
     });
   }
 
+  /** Validates and persists a new survey. */
   protected publishSurvey(): void {
     this.showValidationErrors = true;
     if (!this.hasValidRequiredFields()) return;
@@ -144,28 +185,56 @@ export class CreateSurveyPage {
     void this.router.navigate(['/']);
   }
 
+  /**
+   * Converts an answer index to alphabetical label.
+   * @param index Zero-based answer index.
+   * @returns Letter label (A, B, C...).
+   */
   protected getAnswerLabel(index: number): string {
     return String.fromCharCode(65 + index);
   }
 
+  /**
+   * Updates the survey title.
+   * @param value Input value.
+   */
   protected updateSurveyTitle(value: string): void {
     this.surveyTitle = value.trim();
   }
 
+  /**
+   * Updates the survey description.
+   * @param value Input value.
+   */
   protected updateSurveyDescription(value: string): void {
     this.surveyDescription = value;
   }
 
+  /**
+   * Updates the survey end date.
+   * @param value Date value.
+   */
   protected updateEndDate(value: string): void {
     this.endDate = value.trim();
   }
 
+  /**
+   * Updates the prompt text of a question.
+   * @param questionId Target question id.
+   * @param value Prompt value.
+   */
   protected updateQuestionPrompt(questionId: number, value: string): void {
     this.questions = this.questions.map((question) =>
       question.id === questionId ? { ...question, prompt: value } : question,
     );
   }
 
+  /**
+   * Updates the text of one answer field.
+   * @param questionId Target question id.
+   * @param answerFieldIndex Target answer index.
+   * @param value Answer text.
+   */
   protected updateAnswerText(questionId: number, answerFieldIndex: number, value: string): void {
     this.questions = this.questions.map((question) =>
       question.id === questionId
@@ -174,29 +243,48 @@ export class CreateSurveyPage {
     );
   }
 
+  /** @returns Whether the survey title is currently invalid. */
   protected isSurveyTitleInvalid(): boolean {
     return this.showValidationErrors && !this.surveyTitle.trim();
   }
 
+  /**
+   * Checks whether the prompt of a question is invalid.
+   * @param question Question object.
+   * @returns True when prompt is missing after validation was triggered.
+   */
   protected isQuestionPromptInvalid(question: QuestionItem): boolean {
     return this.showValidationErrors && !this.isQuestionPromptFilled(question);
   }
 
+  /**
+   * Checks whether an answer input is invalid.
+   * @param question Question object.
+   * @param answerFieldIndex Answer index.
+   * @returns True when answer text is empty after validation was triggered.
+   */
   protected isAnswerInputInvalid(question: QuestionItem, answerFieldIndex: number): boolean {
     if (!this.showValidationErrors) return false;
     return !(question.answers[answerFieldIndex] ?? '').trim();
   }
 
+  /**
+   * Checks whether a question has invalid answer options.
+   * @param question Question object.
+   * @returns True when required answers are missing.
+   */
   protected isQuestionAnswersInvalid(question: QuestionItem): boolean {
     return this.showValidationErrors && !this.hasValidAnswerOptions(question);
   }
 
+  /** @returns Formatted dd.mm.yyyy date or a placeholder. */
   protected get formattedEndDate(): string {
     if (!this.endDate) return '--.--.----';
     const [year, month, day] = this.endDate.split('-');
     return day && month && year ? `${day}.${month}.${year}` : '--.--.----';
   }
 
+  /** @returns Survey object ready for storage. */
   private buildSurvey(): Survey {
     return {
       id: nextSurveyId(),
@@ -208,6 +296,7 @@ export class CreateSurveyPage {
     };
   }
 
+  /** @returns Days until survey end date. */
   private getDaysLeft(): number {
     if (!this.endDate) return 30;
     const end = new Date(`${this.endDate}T00:00:00`);
@@ -216,6 +305,7 @@ export class CreateSurveyPage {
     return Math.ceil((end.getTime() - today.getTime()) / 86400000);
   }
 
+  /** @returns Normalized survey questions for persistence. */
   private getSurveyQuestions() {
     return this.questions.map((question, index) => ({
       id: index + 1,
@@ -226,10 +316,17 @@ export class CreateSurveyPage {
     }));
   }
 
+  /**
+   * Maps indexed answers to a string array.
+   * @param indexes Ordered answer indexes.
+   * @param answers Raw answer dictionary.
+   * @returns Trimmed answer list.
+   */
   private getSurveyAnswers(indexes: number[], answers: Record<number, string>): string[] {
     return indexes.map((idx) => answers[idx]?.trim() ?? '');
   }
 
+  /** @returns Saved default state for "allow multiple answers". */
   private readAllowMultipleAnswers(): boolean {
     try {
       const raw = localStorage.getItem(SURVEY_SETTINGS_KEY);
@@ -241,6 +338,11 @@ export class CreateSurveyPage {
     }
   }
 
+  /**
+   * Persists default settings for next survey creation.
+   * @param allowMultipleAnswers Default multiselect flag.
+   * @param surveyTitle Last used survey title.
+   */
   private persistSurveySettings(allowMultipleAnswers: boolean, surveyTitle: string): void {
     const title = surveyTitle || 'Untitled survey';
     localStorage.setItem(
@@ -249,11 +351,17 @@ export class CreateSurveyPage {
     );
   }
 
+  /** @returns Next unique question id for the current draft. */
   private getNextQuestionId(): number {
     if (!this.questions.length) return 1;
     return Math.max(...this.questions.map((question) => question.id)) + 1;
   }
 
+  /**
+   * Creates a new empty question object.
+   * @param id Question id.
+   * @returns New question item.
+   */
   private createQuestionItem(id: number): QuestionItem {
     return {
       id,
@@ -265,6 +373,7 @@ export class CreateSurveyPage {
     };
   }
 
+  /** Resets the first question fields instead of removing it. */
   private resetFirstQuestion(): void {
     const firstQuestion = this.questions[0];
     if (!firstQuestion) return;
@@ -279,6 +388,11 @@ export class CreateSurveyPage {
     ];
   }
 
+  /**
+   * Builds an empty answers object for all answer fields.
+   * @param question Question to clear.
+   * @returns Cleared answer map.
+   */
   private getClearedAnswers(question: QuestionItem): Record<number, string> {
     return Object.fromEntries(question.answerFieldIndexes.map((index) => [index, ''])) as Record<
       number,
@@ -286,6 +400,7 @@ export class CreateSurveyPage {
     >;
   }
 
+  /** @returns True when all required survey fields are valid. */
   private hasValidRequiredFields(): boolean {
     if (!this.surveyTitle.trim()) return false;
     return this.questions.every(
@@ -293,10 +408,20 @@ export class CreateSurveyPage {
     );
   }
 
+  /**
+   * Checks whether question prompt contains text.
+   * @param question Question to validate.
+   * @returns True when prompt is not empty.
+   */
   private isQuestionPromptFilled(question: QuestionItem): boolean {
     return question.prompt.trim().length > 0;
   }
 
+  /**
+   * Validates answer options of a question.
+   * @param question Question to validate.
+   * @returns True when at least two non-empty answers exist.
+   */
   private hasValidAnswerOptions(question: QuestionItem): boolean {
     const answerValues = question.answerFieldIndexes.map(
       (answerFieldIndex) => (question.answers[answerFieldIndex] ?? '').trim(),
