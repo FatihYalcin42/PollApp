@@ -5,6 +5,10 @@ import { type Survey } from '../../shared/interfaces/survey.interface';
 
 const SURVEY_SETTINGS_KEY = 'pollapp:survey-settings';
 const SURVEY_CREATED_OVERLAY_KEY = 'pollapp:survey-created-overlay';
+const MAX_INPUT_LENGTH = 60;
+const MAX_DESCRIPTION_LENGTH = 160;
+const DEFAULT_DAYS_LEFT = 30;
+const MS_PER_DAY = 86400000;
 type SurveySettings = { allowMultipleAnswers?: boolean; surveyTitle?: string };
 type QuestionItem = {
   id: number;
@@ -106,7 +110,7 @@ export class CreateSurveyPage {
    */
   protected limitInputLength(event: Event): void {
     const input = event.target as HTMLInputElement;
-    input.value = input.value.slice(0, 60);
+    input.value = input.value.slice(0, MAX_INPUT_LENGTH);
   }
 
   /**
@@ -115,7 +119,7 @@ export class CreateSurveyPage {
    */
   protected limitDescriptionLength(event: Event): void {
     const textarea = event.target as HTMLTextAreaElement;
-    textarea.value = textarea.value.slice(0, 160);
+    textarea.value = textarea.value.slice(0, MAX_DESCRIPTION_LENGTH);
   }
 
   /** Adds a new question until the configured max is reached. */
@@ -298,11 +302,11 @@ export class CreateSurveyPage {
 
   /** @returns Days until survey end date. */
   private getDaysLeft(): number {
-    if (!this.endDate) return 30;
+    if (!this.endDate) return DEFAULT_DAYS_LEFT;
     const end = new Date(`${this.endDate}T00:00:00`);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    return Math.ceil((end.getTime() - today.getTime()) / 86400000);
+    return Math.ceil((end.getTime() - today.getTime()) / MS_PER_DAY);
   }
 
   /** @returns Normalized survey questions for persistence. */

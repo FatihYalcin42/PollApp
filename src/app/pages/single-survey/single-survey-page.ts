@@ -5,6 +5,7 @@ import { type Survey } from '../../shared/interfaces/survey.interface';
 
 type SurveyStats = { total: number; counts: Record<number, number[]> };
 type SurveyStatsStore = Record<number, SurveyStats>;
+const RESULTS_MOBILE_BREAKPOINT = 740;
 
 @Component({
   selector: 'app-single-survey-page',
@@ -161,7 +162,7 @@ export class SingleSurveyPage {
       this.isResultsOpen = true;
       return;
     }
-    this.isResultsToggleVisible = window.innerWidth <= 740;
+    this.isResultsToggleVisible = window.innerWidth <= RESULTS_MOBILE_BREAKPOINT;
     if (!this.isResultsToggleVisible) this.isResultsOpen = true;
   }
 

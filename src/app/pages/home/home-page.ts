@@ -4,6 +4,7 @@ import { getAllSurveys } from '../../shared/services/survey-storage.service';
 import { type Survey } from '../../shared/interfaces/survey.interface';
 
 const SURVEY_CREATED_OVERLAY_KEY = 'pollapp:survey-created-overlay';
+const CREATED_OVERLAY_TIMEOUT_MS = 3200;
 
 @Component({
   selector: 'app-home-page',
@@ -22,7 +23,7 @@ export class HomePage implements OnInit {
     if (localStorage.getItem(SURVEY_CREATED_OVERLAY_KEY) !== '1') return;
     this.showCreatedOverlay = true;
     localStorage.removeItem(SURVEY_CREATED_OVERLAY_KEY);
-    window.setTimeout(() => (this.showCreatedOverlay = false), 3200);
+    window.setTimeout(() => (this.showCreatedOverlay = false), CREATED_OVERLAY_TIMEOUT_MS);
   }
 
   /** Closes the created-survey overlay manually. */
