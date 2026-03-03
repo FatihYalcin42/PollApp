@@ -27,6 +27,7 @@ type QuestionItem = {
 export class CreateSurveyPage implements OnChanges, OnDestroy {
   @Input() isDialog = false;
   @Output() closeRequested = new EventEmitter<void>();
+  @Output() surveyPublished = new EventEmitter<void>();
   protected isCategoryDropdownOpen = false;
   protected selectedCategory = 'Choose categorie';
   protected readonly minEndDate = this.getTodayIsoDate();
@@ -257,6 +258,7 @@ export class CreateSurveyPage implements OnChanges, OnDestroy {
     if (!this.hasValidRequiredFields()) return;
     const survey = await this.buildSurvey();
     await addSurvey(survey);
+    this.surveyPublished.emit();
     this.closeCreateSurvey();
   }
 

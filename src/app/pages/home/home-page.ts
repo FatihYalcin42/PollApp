@@ -11,12 +11,14 @@ import { CreateSurveyPage } from '../create-survey/create-survey-page';
   styleUrl: './home-page.scss',
 })
 export class HomePage implements OnInit, OnDestroy {
+  protected isCreatedOverlayVisible = false;
   protected isCreateSurveyDialogOpen = false;
   protected isPastView = false;
   protected isSortMenuOpen = false;
   protected selectedSortCategory = '';
   protected surveys: Survey[] = [];
   private unsubscribeSurveyChanges: (() => void) | null = null;
+  private createdOverlayTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
   constructor(private readonly cdr: ChangeDetectorRef) {}
 
@@ -33,6 +35,7 @@ export class HomePage implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.unsubscribeSurveyChanges?.();
     this.unsubscribeSurveyChanges = null;
+    this.clearCreatedOverlayTimer();
   }
 
   /** Loads surveys from configured storage backend. */
@@ -59,6 +62,19 @@ export class HomePage implements OnInit, OnDestroy {
   /** Closes the create survey dialog overlay. */
   protected closeCreateSurveyDialog(): void {
     this.isCreateSurveyDialogOpen = false;
+  }
+
+  /** Shows "survey created" overlay and closes the dialog. */
+  protected handleSurveyPublished(): void {
+    this.isCreatedOverlayVisible = true;
+    this.closeCreateSurveyDialog();
+    this.startCreatedOverlayTimer();
+  }
+
+  /** Hides the "survey created" overlay immediately. */
+  protected hideCreatedOverlay(): void {
+    this.isCreatedOverlayVisible = false;
+    this.clearCreatedOverlayTimer();
   }
 
   /** Closes create survey dialog on Escape key. */
@@ -102,5 +118,22 @@ export class HomePage implements OnInit, OnDestroy {
    */
   private sortByDays(items: Survey[]): Survey[] {
     return [...items].sort((a, b) => a.daysLeft - b.daysLeft);
+  }
+
+  /** Starts auto-hide timer for the created overlay. */
+  private startCreatedOverlayTimer(): void {
+    this.clearCreatedOverlayTimer();
+    this.createdOverlayTimeoutId = setTimeout(() => {
+      this.isCreatedOverlayVisible = false;
+      this.createdOverlayTimeoutId = null;
+      this.cdr.detectChanges();
+    }, 3000);
+  }
+
+  /** Clears running created overlay timer. */
+  private clearCreatedOverlayTimer(): void {
+    if (!this.createdOverlayTimeoutId) return;
+    clearTimeout(this.createdOverlayTimeoutId);
+    this.createdOverlayTimeoutId = null;
   }
 }

@@ -19,6 +19,7 @@ const RESULTS_MOBILE_BREAKPOINT = 740;
   styleUrl: './single-survey-page.scss',
 })
 export class SingleSurveyPage implements OnDestroy {
+  protected isCreatedOverlayVisible = false;
   protected isCreateSurveyDialogOpen = false;
   protected selectedAnswers: Record<number, number[]> = {};
   protected totalResponses = 0;
@@ -28,6 +29,7 @@ export class SingleSurveyPage implements OnDestroy {
   protected survey: Survey | null = null;
   private routeParamSubscription: Subscription | null = null;
   private unsubscribeSurveyStats: (() => void) | null = null;
+  private createdOverlayTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
   /**
    * Loads survey data from route changes and restores persisted stats.
@@ -46,6 +48,7 @@ export class SingleSurveyPage implements OnDestroy {
     this.routeParamSubscription?.unsubscribe();
     this.routeParamSubscription = null;
     this.unsubscribeFromSurveyStats();
+    this.clearCreatedOverlayTimer();
   }
 
   /**
@@ -127,6 +130,19 @@ export class SingleSurveyPage implements OnDestroy {
   /** Closes the create survey dialog overlay. */
   protected closeCreateSurveyDialog(): void {
     this.isCreateSurveyDialogOpen = false;
+  }
+
+  /** Shows "survey created" info overlay and closes dialog. */
+  protected handleSurveyPublished(): void {
+    this.isCreatedOverlayVisible = true;
+    this.closeCreateSurveyDialog();
+    this.startCreatedOverlayTimer();
+  }
+
+  /** Hides "survey created" info overlay immediately. */
+  protected hideCreatedOverlay(): void {
+    this.isCreatedOverlayVisible = false;
+    this.clearCreatedOverlayTimer();
   }
 
   /** Closes create survey dialog on Escape key. */
@@ -226,5 +242,22 @@ export class SingleSurveyPage implements OnDestroy {
     const baseVotes = this.answerCounts[questionId]?.[answerIndex] ?? 0;
     const selected = this.selectedAnswers[questionId] ?? [];
     return selected.includes(answerIndex) ? baseVotes + 1 : baseVotes;
+  }
+
+  /** Starts auto-hide timer for the created overlay. */
+  private startCreatedOverlayTimer(): void {
+    this.clearCreatedOverlayTimer();
+    this.createdOverlayTimeoutId = setTimeout(() => {
+      this.isCreatedOverlayVisible = false;
+      this.createdOverlayTimeoutId = null;
+      this.cdr.detectChanges();
+    }, 3000);
+  }
+
+  /** Clears running created overlay timer. */
+  private clearCreatedOverlayTimer(): void {
+    if (!this.createdOverlayTimeoutId) return;
+    clearTimeout(this.createdOverlayTimeoutId);
+    this.createdOverlayTimeoutId = null;
   }
 }

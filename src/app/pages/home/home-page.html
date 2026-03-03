@@ -1,4 +1,10 @@
 <main class="home">
+  @if (isCreatedOverlayVisible) {
+    <button class="created-overlay" type="button" aria-label="Dismiss survey created message" (click)="hideCreatedOverlay()">
+      <img src="assets/Overlay.svg" alt="Survey created" />
+    </button>
+  }
+
   <div class="home__inner">
     <img class="brand-logo" src="assets/logo-orange.svg" alt="PollApp logo" />
 
@@ -139,6 +145,10 @@
   </div>
 
   @if (isCreateSurveyDialogOpen) {
-    <app-create-survey-page [isDialog]="true" (closeRequested)="closeCreateSurveyDialog()" />
+    <app-create-survey-page
+      [isDialog]="true"
+      (closeRequested)="closeCreateSurveyDialog()"
+      (surveyPublished)="handleSurveyPublished()"
+    />
   }
 </main>

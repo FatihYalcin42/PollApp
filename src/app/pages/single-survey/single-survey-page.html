@@ -1,4 +1,10 @@
 <main class="single-survey-page">
+  @if (isCreatedOverlayVisible) {
+    <button class="created-overlay" type="button" aria-label="Dismiss survey created message" (click)="hideCreatedOverlay()">
+      <img src="assets/Overlay.svg" alt="Survey created" />
+    </button>
+  }
+
   <section class="single-survey-layout">
     <div class="single-survey-layout__header">
       <a class="single-survey-logo-link" [routerLink]="['/']" aria-label="Go to home page">
@@ -147,6 +153,10 @@
   </section>
 
   @if (isCreateSurveyDialogOpen) {
-    <app-create-survey-page [isDialog]="true" (closeRequested)="closeCreateSurveyDialog()" />
+    <app-create-survey-page
+      [isDialog]="true"
+      (closeRequested)="closeCreateSurveyDialog()"
+      (surveyPublished)="handleSurveyPublished()"
+    />
   }
 </main>
