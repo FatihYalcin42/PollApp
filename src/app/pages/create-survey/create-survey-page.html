@@ -7,7 +7,7 @@
       </div>
       <button class="cancel-button" type="button" aria-label="Cancel" [routerLink]="['/']">
         <span class="cancel-button__text">Cancel</span>
-        <img class="cancel-button__icon" src="/assets/close.svg" alt="" />
+        <img class="cancel-button__icon" src="assets/close.svg" alt="" />
       </button>
     </div>
     <div class="create-survey-form-surface">
@@ -35,8 +35,8 @@
                 aria-label="Clear survey input"
                 (click)="clearField(surveyNameInput); updateSurveyTitle('')"
               >
-                <img class="delete-button__icon" src="/assets/delete-icon.svg" alt="" />
-                <img class="delete-button__icon-hover" src="/assets/delete-icon-hover.svg" alt="" />
+                <img class="delete-button__icon" src="assets/delete-icon.svg" alt="" />
+                <img class="delete-button__icon-hover" src="assets/delete-icon-hover.svg" alt="" />
               </button>
             </div>
             @if (isSurveyTitleInvalid()) {
@@ -66,8 +66,8 @@
                   aria-label="Clear end date input"
                   (click)="clearField(endDateInput); updateEndDate('')"
                 >
-                  <img class="delete-button__icon" src="/assets/delete-icon.svg" alt="" />
-                  <img class="delete-button__icon-hover" src="/assets/delete-icon-hover.svg" alt="" />
+                  <img class="delete-button__icon" src="assets/delete-icon.svg" alt="" />
+                  <img class="delete-button__icon-hover" src="assets/delete-icon-hover.svg" alt="" />
                 </button>
               </div>
 
@@ -121,8 +121,8 @@
               aria-label="Clear description text"
               (click)="clearField(descriptionInput); updateSurveyDescription('')"
             >
-              <img class="delete-button__icon" src="/assets/delete-icon.svg" alt="" />
-              <img class="delete-button__icon-hover" src="/assets/delete-icon-hover.svg" alt="" />
+              <img class="delete-button__icon" src="assets/delete-icon.svg" alt="" />
+              <img class="delete-button__icon-hover" src="assets/delete-icon-hover.svg" alt="" />
             </button>
           </div>
         </section>
@@ -143,8 +143,8 @@
                   [attr.aria-label]="questionNumber === 0 ? 'Clear question 1' : 'Delete question ' + (questionNumber + 1)"
                   (click)="handleQuestionDelete(questionNumber)"
                 >
-                  <img class="delete-button__icon" src="/assets/delete-icon.svg" alt="" />
-                  <img class="delete-button__icon-hover" src="/assets/delete-icon-hover.svg" alt="" />
+                  <img class="delete-button__icon" src="assets/delete-icon.svg" alt="" />
+                  <img class="delete-button__icon-hover" src="assets/delete-icon-hover.svg" alt="" />
                 </button>
 
                 <input
@@ -199,8 +199,8 @@
                         [attr.aria-label]="'Delete answer ' + getAnswerLabel(index)"
                         (click)="removeAnswerField(question.id, answerIndex)"
                       >
-                        <img class="delete-button__icon" src="/assets/delete-icon.svg" alt="" />
-                        <img class="delete-button__icon-hover" src="/assets/delete-icon-hover.svg" alt="" />
+                        <img class="delete-button__icon" src="assets/delete-icon.svg" alt="" />
+                        <img class="delete-button__icon-hover" src="assets/delete-icon-hover.svg" alt="" />
                       </button>
                     </div>
                   }
@@ -218,7 +218,7 @@
                     (click)="addAnswerField(question.id)"
                   >
                     <span class="add-answer-button__text">Add answer</span>
-                    <img class="add-answer-button__icon" src="/assets/add_circle-white.svg" alt="" />
+                    <img class="add-answer-button__icon" src="assets/add_circle-white.svg" alt="" />
                   </button>
 
                   <p class="add-answer-button__hint">You can add up to 6 answer fields.</p>
@@ -237,7 +237,7 @@
                 (click)="addQuestion()"
               >
                 <span class="add-question-button__text">Add new question</span>
-                <img class="add-question-button__icon" src="/assets/add_circle-white.svg" alt="" />
+                <img class="add-question-button__icon" src="assets/add_circle-white.svg" alt="" />
               </button>
             </div>
           }
@@ -253,7 +253,7 @@
               (click)="addQuestion()"
             >
               <span class="add-question-button__text">Add new question</span>
-              <img class="add-question-button__icon" src="/assets/add_circle-white.svg" alt="" />
+              <img class="add-question-button__icon" src="assets/add_circle-white.svg" alt="" />
             </button>
           </div>
         }
@@ -269,7 +269,7 @@
           (click)="publishSurvey()"
         >
           <span class="create-survey-submit-button__text">Publish</span>
-          <img class="create-survey-submit-button__icon" src="/assets/check.svg" alt="" />
+          <img class="create-survey-submit-button__icon" src="assets/check.svg" alt="" />
         </button>
         <p class="create-survey-end-date">Ends on {{ formattedEndDate }}</p>
       </div>
