@@ -44,9 +44,15 @@
                   "maximumError": "24kB"
                 }
               ],
-              "baseHref": "/angular-projects/PollApp/",
-              "deployUrl": "/angular-projects/PollApp/",
               "outputHashing": "all"
+            },
+            "fdp": {
+              "baseHref": "/angular-projects/PollApp/",
+              "deployUrl": "/angular-projects/PollApp/"
+            },
+            "lve": {
+              "baseHref": "/",
+              "deployUrl": "/"
             },
             "development": {
               "fileReplacements": [
@@ -67,6 +73,12 @@
           "configurations": {
             "production": {
               "buildTarget": "poll-app:build:production"
+            },
+            "fdp": {
+              "buildTarget": "poll-app:build:production,fdp"
+            },
+            "lve": {
+              "buildTarget": "poll-app:build:production,lve"
             },
             "development": {
               "buildTarget": "poll-app:build:development"
