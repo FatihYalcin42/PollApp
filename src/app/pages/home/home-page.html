@@ -19,7 +19,7 @@
             class="new-survey-button"
             type="button"
             aria-label="Create new survey"
-            [routerLink]="['/create-survey']"
+            (click)="openCreateSurveyDialog()"
           >
             <span class="new-survey-button__text">New survey</span>
             <span class="new-survey-button__icon" aria-hidden="true">
@@ -137,4 +137,8 @@
       </div>
     </section>
   </div>
+
+  @if (isCreateSurveyDialogOpen) {
+    <app-create-survey-page [isDialog]="true" (closeRequested)="closeCreateSurveyDialog()" />
+  }
 </main>

@@ -1,11 +1,11 @@
-<main class="create-survey-page">
+<main class="create-survey-page" (click)="handleBackdropClick($event)">
   <section class="create-survey-canvas" aria-label="Create survey workspace">
     <div class="create-survey-header">
       <div class="create-survey-header__left">
         <span class="create-survey-status-badge">Draft</span>
         <h1 class="create-survey-title">Create new survey</h1>
       </div>
-      <button class="cancel-button" type="button" aria-label="Cancel" [routerLink]="['/']">
+      <button class="cancel-button" type="button" aria-label="Cancel" (click)="closeCreateSurvey()">
         <span class="cancel-button__text">Cancel</span>
         <img class="cancel-button__icon" src="assets/close.svg" alt="" />
       </button>

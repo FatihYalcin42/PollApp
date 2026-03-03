@@ -2,14 +2,16 @@ import { ChangeDetectorRef, Component, HostListener, OnDestroy, OnInit } from '@
 import { RouterLink } from '@angular/router';
 import { getAllSurveys, subscribeToSurveyChanges } from '../../shared/services/survey-storage.service';
 import { type Survey } from '../../shared/interfaces/survey.interface';
+import { CreateSurveyPage } from '../create-survey/create-survey-page';
 
 @Component({
   selector: 'app-home-page',
-  imports: [RouterLink],
+  imports: [RouterLink, CreateSurveyPage],
   templateUrl: './home-page.html',
   styleUrl: './home-page.scss',
 })
 export class HomePage implements OnInit, OnDestroy {
+  protected isCreateSurveyDialogOpen = false;
   protected isPastView = false;
   protected isSortMenuOpen = false;
   protected selectedSortCategory = '';
@@ -47,6 +49,23 @@ export class HomePage implements OnInit, OnDestroy {
   protected closeSortMenuOnOutsideClick(event: MouseEvent): void {
     const target = event.target as HTMLElement | null;
     if (!target?.closest('.sort-menu')) this.isSortMenuOpen = false;
+  }
+
+  /** Opens the create survey dialog overlay. */
+  protected openCreateSurveyDialog(): void {
+    this.isCreateSurveyDialogOpen = true;
+  }
+
+  /** Closes the create survey dialog overlay. */
+  protected closeCreateSurveyDialog(): void {
+    this.isCreateSurveyDialogOpen = false;
+  }
+
+  /** Closes create survey dialog on Escape key. */
+  @HostListener('document:keydown.escape')
+  protected closeCreateSurveyDialogOnEscape(): void {
+    if (!this.isCreateSurveyDialogOpen) return;
+    this.closeCreateSurveyDialog();
   }
 
   /** @returns Distinct category names from all surveys. */

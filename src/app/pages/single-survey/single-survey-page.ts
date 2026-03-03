@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, HostListener, OnDestroy } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { type Survey, type SurveyStats } from '../../shared/interfaces/survey.interface';
 import {
@@ -8,16 +8,18 @@ import {
   saveSurveyResponse,
   subscribeToSurveyStats,
 } from '../../shared/services/survey-storage.service';
+import { CreateSurveyPage } from '../create-survey/create-survey-page';
 
 const RESULTS_MOBILE_BREAKPOINT = 740;
 
 @Component({
   selector: 'app-single-survey-page',
-  imports: [RouterLink],
+  imports: [CreateSurveyPage],
   templateUrl: './single-survey-page.html',
   styleUrl: './single-survey-page.scss',
 })
 export class SingleSurveyPage implements OnDestroy {
+  protected isCreateSurveyDialogOpen = false;
   protected selectedAnswers: Record<number, number[]> = {};
   protected totalResponses = 0;
   protected answerCounts: Record<number, number[]> = {};
@@ -115,6 +117,23 @@ export class SingleSurveyPage implements OnDestroy {
   @HostListener('window:resize')
   protected onWindowResize(): void {
     this.updateResultsToggleVisibility();
+  }
+
+  /** Opens the create survey dialog overlay. */
+  protected openCreateSurveyDialog(): void {
+    this.isCreateSurveyDialogOpen = true;
+  }
+
+  /** Closes the create survey dialog overlay. */
+  protected closeCreateSurveyDialog(): void {
+    this.isCreateSurveyDialogOpen = false;
+  }
+
+  /** Closes create survey dialog on Escape key. */
+  @HostListener('document:keydown.escape')
+  protected closeCreateSurveyDialogOnEscape(): void {
+    if (!this.isCreateSurveyDialogOpen) return;
+    this.closeCreateSurveyDialog();
   }
 
   /** @returns True when at least one answer is selected. */

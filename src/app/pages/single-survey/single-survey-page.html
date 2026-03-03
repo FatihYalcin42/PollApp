@@ -6,7 +6,7 @@
         class="single-survey-create-button"
         type="button"
         aria-label="Create survey"
-        [routerLink]="['/create-survey']"
+        (click)="openCreateSurveyDialog()"
       >
         Create survey
       </button>
@@ -143,4 +143,8 @@
       }
     </div>
   </section>
+
+  @if (isCreateSurveyDialogOpen) {
+    <app-create-survey-page [isDialog]="true" (closeRequested)="closeCreateSurveyDialog()" />
+  }
 </main>

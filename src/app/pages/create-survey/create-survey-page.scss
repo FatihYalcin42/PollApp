@@ -4,6 +4,27 @@
   background: #ffffff;
 }
 
+:host.create-survey-dialog-mode {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: transparent;
+}
+
+:host.create-survey-dialog-mode .create-survey-page {
+  align-items: flex-start;
+  justify-content: center;
+  min-height: 100dvh;
+  padding: clamp(0.8rem, 3vw, 1.5rem);
+  background: rgb(34 18 39 / 68%);
+  backdrop-filter: blur(2px);
+  overflow-y: auto;
+}
+
+:host.create-survey-dialog-mode .create-survey-canvas {
+  margin: auto;
+}
+
 .create-survey-page {
   min-height: 100dvh;
   display: flex;

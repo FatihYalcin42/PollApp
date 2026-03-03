@@ -1,5 +1,5 @@
-import { Component, HostListener } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Component, EventEmitter, HostBinding, HostListener, Input, Output } from '@angular/core';
+import { Router } from '@angular/router';
 import { addSurvey, nextSurveyId } from '../../shared/services/survey-storage.service';
 import { type Survey } from '../../shared/interfaces/survey.interface';
 
@@ -18,11 +18,13 @@ type QuestionItem = {
 
 @Component({
   selector: 'app-create-survey-page',
-  imports: [RouterLink],
+  imports: [],
   templateUrl: './create-survey-page.html',
   styleUrl: './create-survey-page.scss',
 })
 export class CreateSurveyPage {
+  @Input() isDialog = false;
+  @Output() closeRequested = new EventEmitter<void>();
   protected isCategoryDropdownOpen = false;
   protected selectedCategory = 'Choose categorie';
   protected surveyTitle = '';
@@ -50,11 +52,42 @@ export class CreateSurveyPage {
     },
   ];
 
+  @HostBinding('class.create-survey-dialog-mode')
+  protected get isCreateSurveyDialogMode(): boolean {
+    return this.isDialog;
+  }
+
   constructor(private readonly router: Router) {}
+
+  /** Closes create survey view either as dialog or via route navigation. */
+  protected closeCreateSurvey(): void {
+    if (this.isDialog) {
+      this.closeRequested.emit();
+      return;
+    }
+    void this.router.navigate(['/']);
+  }
+
+  /**
+   * Closes the dialog when user clicks on the backdrop area.
+   * @param event Native click event.
+   */
+  protected handleBackdropClick(event: MouseEvent): void {
+    if (!this.isDialog) return;
+    if (event.target !== event.currentTarget) return;
+    this.closeCreateSurvey();
+  }
 
   /** Toggles the category dropdown state. */
   protected toggleCategoryDropdown(): void {
     this.isCategoryDropdownOpen = !this.isCategoryDropdownOpen;
+  }
+
+  /** Closes dialog on Escape key while running in dialog mode. */
+  @HostListener('document:keydown.escape')
+  protected closeDialogOnEscape(): void {
+    if (!this.isDialog) return;
+    this.closeCreateSurvey();
   }
 
   /**
@@ -179,7 +212,7 @@ export class CreateSurveyPage {
     if (!this.hasValidRequiredFields()) return;
     const survey = await this.buildSurvey();
     await addSurvey(survey);
-    void this.router.navigate(['/']);
+    this.closeCreateSurvey();
   }
 
   /**
