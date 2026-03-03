@@ -189,7 +189,7 @@
                         class="create-survey-input answer-row__input"
                         [class.create-survey-input--error]="isAnswerInputInvalid(question, answerIndex)"
                         type="text"
-                        [value]="question.answers[answerIndex] ?? ''"
+                        [value]="question.answers[answerIndex]"
                         [attr.aria-label]="'Answer ' + getAnswerLabel(index)"
                         (input)="limitInputLength($event); updateAnswerText(question.id, answerIndex, answerInput.value)"
                       />
