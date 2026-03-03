@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, HostListener, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { type Survey, type SurveyStats } from '../../shared/interfaces/survey.interface';
 import {
@@ -14,7 +14,7 @@ const RESULTS_MOBILE_BREAKPOINT = 740;
 
 @Component({
   selector: 'app-single-survey-page',
-  imports: [CreateSurveyPage],
+  imports: [CreateSurveyPage, RouterLink],
   templateUrl: './single-survey-page.html',
   styleUrl: './single-survey-page.scss',
 })

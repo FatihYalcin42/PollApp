@@ -1,7 +1,9 @@
 <main class="single-survey-page">
   <section class="single-survey-layout">
     <div class="single-survey-layout__header">
-      <img class="single-survey-logo" src="assets/logo-purple.svg" alt="Poll App logo" />
+      <a class="single-survey-logo-link" [routerLink]="['/']" aria-label="Go to home page">
+        <img class="single-survey-logo" src="assets/logo-purple.svg" alt="Poll App logo" />
+      </a>
       <button
         class="single-survey-create-button"
         type="button"
