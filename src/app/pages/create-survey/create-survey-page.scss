@@ -19,6 +19,7 @@
   background: rgb(34 18 39 / 68%);
   backdrop-filter: blur(2px);
   overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 :host.create-survey-dialog-mode .create-survey-canvas {

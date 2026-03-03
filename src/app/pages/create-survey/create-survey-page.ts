@@ -1,4 +1,5 @@
-import { Component, EventEmitter, HostBinding, HostListener, Input, Output } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { Component, EventEmitter, HostBinding, HostListener, Inject, Input, OnChanges, OnDestroy, Output, SimpleChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import { addSurvey, nextSurveyId } from '../../shared/services/survey-storage.service';
 import { type Survey } from '../../shared/interfaces/survey.interface';
@@ -7,6 +8,7 @@ const MAX_INPUT_LENGTH = 60;
 const MAX_DESCRIPTION_LENGTH = 160;
 const DEFAULT_DAYS_LEFT = 30;
 const MS_PER_DAY = 86400000;
+const BODY_SCROLL_LOCK_CLASS = 'overlay-scroll-lock';
 type QuestionItem = {
   id: number;
   renderVersion: number;
@@ -22,7 +24,7 @@ type QuestionItem = {
   templateUrl: './create-survey-page.html',
   styleUrl: './create-survey-page.scss',
 })
-export class CreateSurveyPage {
+export class CreateSurveyPage implements OnChanges, OnDestroy {
   @Input() isDialog = false;
   @Output() closeRequested = new EventEmitter<void>();
   protected isCategoryDropdownOpen = false;
@@ -57,7 +59,26 @@ export class CreateSurveyPage {
     return this.isDialog;
   }
 
-  constructor(private readonly router: Router) {}
+  private hasBodyScrollLock = false;
+
+  constructor(
+    private readonly router: Router,
+    @Inject(DOCUMENT) private readonly document: Document,
+  ) {}
+
+  /**
+   * Applies or removes body scroll lock when dialog mode input changes.
+   * @param changes Component input changes.
+   */
+  ngOnChanges(changes: SimpleChanges): void {
+    if (!changes['isDialog']) return;
+    this.updateBodyScrollLock();
+  }
+
+  /** Removes dialog body scroll lock during component teardown. */
+  ngOnDestroy(): void {
+    this.unlockBodyScroll();
+  }
 
   /** Closes create survey view either as dialog or via route navigation. */
   protected closeCreateSurvey(): void {
@@ -76,6 +97,29 @@ export class CreateSurveyPage {
     if (!this.isDialog) return;
     if (event.target !== event.currentTarget) return;
     this.closeCreateSurvey();
+  }
+
+  /** Synchronizes body scrolling state with current dialog mode. */
+  private updateBodyScrollLock(): void {
+    if (this.isDialog) {
+      this.lockBodyScroll();
+      return;
+    }
+    this.unlockBodyScroll();
+  }
+
+  /** Locks background page scrolling while dialog is visible. */
+  private lockBodyScroll(): void {
+    if (this.hasBodyScrollLock) return;
+    this.document.body.classList.add(BODY_SCROLL_LOCK_CLASS);
+    this.hasBodyScrollLock = true;
+  }
+
+  /** Restores background page scrolling after dialog close. */
+  private unlockBodyScroll(): void {
+    if (!this.hasBodyScrollLock) return;
+    this.document.body.classList.remove(BODY_SCROLL_LOCK_CLASS);
+    this.hasBodyScrollLock = false;
   }
 
   /** Toggles the category dropdown state. */

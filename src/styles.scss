@@ -28,3 +28,8 @@ body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
+
+body.overlay-scroll-lock {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
