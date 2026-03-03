@@ -317,6 +317,11 @@
 }
 
 .highlight-card__category {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
   font-family: 'Mulish', var(--font-body);
   font-weight: 500;
   font-size: 14px;
@@ -325,6 +330,11 @@
 }
 
 .highlight-card__title {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
   font-family: 'Mulish', var(--font-body);
   font-weight: 700;
   font-size: 26px;
@@ -563,6 +573,11 @@
 }
 
 .list-card__category {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
   font-family: 'Mulish', var(--font-body);
   font-weight: 500;
   font-size: 14px;
@@ -571,6 +586,11 @@
 }
 
 .list-card__title {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
   font-family: 'Mulish', var(--font-body);
   font-weight: 700;
   font-size: 24px;
