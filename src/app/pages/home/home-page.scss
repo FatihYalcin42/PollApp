@@ -793,6 +793,17 @@
 
   .list-card {
     width: min(100%, 513px);
+    min-height: 127px;
+    height: auto;
+    gap: 12px;
+  }
+
+  .list-card__title {
+    line-height: 1.15;
+  }
+
+  .list-card__meta {
+    margin-top: 4px;
   }
 
   .surveys-toolbar {
