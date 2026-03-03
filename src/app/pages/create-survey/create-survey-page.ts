@@ -29,6 +29,7 @@ export class CreateSurveyPage implements OnChanges, OnDestroy {
   @Output() closeRequested = new EventEmitter<void>();
   protected isCategoryDropdownOpen = false;
   protected selectedCategory = 'Choose categorie';
+  protected readonly minEndDate = this.getTodayIsoDate();
   protected surveyTitle = '';
   protected surveyDescription = '';
   protected endDate = '';
@@ -289,7 +290,12 @@ export class CreateSurveyPage implements OnChanges, OnDestroy {
    * @param value Date value.
    */
   protected updateEndDate(value: string): void {
-    this.endDate = value.trim();
+    const trimmedValue = value.trim();
+    if (!trimmedValue) {
+      this.endDate = '';
+      return;
+    }
+    this.endDate = this.isPastDate(trimmedValue) ? this.minEndDate : trimmedValue;
   }
 
   /**
@@ -376,7 +382,24 @@ export class CreateSurveyPage implements OnChanges, OnDestroy {
     const end = new Date(`${this.endDate}T00:00:00`);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    return Math.ceil((end.getTime() - today.getTime()) / MS_PER_DAY);
+    return Math.max(0, Math.ceil((end.getTime() - today.getTime()) / MS_PER_DAY));
+  }
+
+  /** @returns True if the provided end date is before today. */
+  private isPastDate(value: string): boolean {
+    const selectedDate = new Date(`${value}T00:00:00`);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return selectedDate.getTime() < today.getTime();
+  }
+
+  /** @returns Today's date in yyyy-mm-dd format for date inputs. */
+  private getTodayIsoDate(): string {
+    const today = new Date();
+    const year = String(today.getFullYear());
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   }
 
   /** @returns Normalized survey questions for persistence. */

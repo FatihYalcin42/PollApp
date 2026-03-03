@@ -60,6 +60,7 @@
                   id="survey-end-date-input"
                   type="date"
                   aria-label="Set end date optional"
+                  [min]="minEndDate"
                   [value]="endDate"
                   (change)="updateEndDate(endDateInput.value)"
                 />
