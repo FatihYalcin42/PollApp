@@ -44,6 +44,8 @@
                   "maximumError": "24kB"
                 }
               ],
+              "baseHref": "/angular-projects/PollApp/",
+              "deployUrl": "/angular-projects/PollApp/",
               "outputHashing": "all"
             },
             "development": {
