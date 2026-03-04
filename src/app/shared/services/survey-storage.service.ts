@@ -1,6 +1,7 @@
 import { type RealtimeChannel, type RealtimePostgresChangesPayload } from '@supabase/supabase-js';
 
 import { type Survey, type SurveyQuestion, type SurveyStats } from '../interfaces/survey.interface';
+import { normalizeSurveyCategory } from '../constants/survey-categories';
 import { supabase } from './supabase-client.service';
 
 type DbSurveyRow = {
@@ -241,7 +242,7 @@ function parseNumericId(value: unknown): number | null {
 function mapDbSurveyToSurvey(row: DbSurveyRow): Survey {
   return {
     id: row.id,
-    category: row.category,
+    category: normalizeSurveyCategory(row.category),
     title: row.title,
     description: row.description,
     daysLeft: row.days_left,
@@ -257,7 +258,7 @@ function mapDbSurveyToSurvey(row: DbSurveyRow): Survey {
 function mapSurveyToDb(survey: Survey): DbSurveyRow {
   return {
     id: survey.id,
-    category: survey.category,
+    category: normalizeSurveyCategory(survey.category),
     title: survey.title,
     description: survey.description,
     days_left: survey.daysLeft,
