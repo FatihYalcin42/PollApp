@@ -107,7 +107,8 @@ export class SingleSurveyPage implements OnDestroy {
     const total = this.getProjectedTotalResponses();
     if (!total) return 0;
     const votes = this.getProjectedVotes(questionId, answerIndex);
-    return Math.round((votes / total) * 100);
+    const percent = Math.round((votes / total) * 100);
+    return Math.max(0, Math.min(percent, 100));
   }
 
   /** Toggles results accordion in responsive mode. */

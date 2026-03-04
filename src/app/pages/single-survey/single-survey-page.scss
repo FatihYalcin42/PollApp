@@ -492,7 +492,6 @@
 .single-survey-results-bar {
   width: 255px;
   height: 14px;
-  overflow: hidden;
   border-top-right-radius: 20px;
   border-bottom-right-radius: 20px;
   background: #e9ddeb;
@@ -500,6 +499,7 @@
 
 .single-survey-results-bar__fill {
   display: block;
+  max-width: 100%;
   height: 14px;
   border-top-right-radius: 20px;
   border-bottom-right-radius: 20px;
