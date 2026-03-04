@@ -55,7 +55,11 @@
                 <span class="highlight-card__category">{{ survey.category }}</span>
                 <span class="highlight-card__title">{{ survey.title }}</span>
                 <span class="highlight-card__meta">
-                  Ends in {{ survey.daysLeft }} Day{{ survey.daysLeft === 1 ? '' : 's' }}
+                  {{
+                    survey.daysLeft === 0
+                      ? 'Today'
+                      : 'Ends in ' + survey.daysLeft + ' Day' + (survey.daysLeft === 1 ? '' : 's')
+                  }}
                 </span>
               </button>
             </article>
@@ -135,7 +139,11 @@
                 <span class="list-card__title">{{ survey.title }}</span>
                 @if (!isPastView) {
                   <span class="list-card__meta">
-                    Ends in {{ survey.daysLeft }} Day{{ survey.daysLeft === 1 ? '' : 's' }}
+                    {{
+                      survey.daysLeft === 0
+                        ? 'Today'
+                        : 'Ends in ' + survey.daysLeft + ' Day' + (survey.daysLeft === 1 ? '' : 's')
+                    }}
                   </span>
                 }
               </button>
