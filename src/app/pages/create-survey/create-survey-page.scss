@@ -12,7 +12,6 @@
   padding: clamp(0.8rem, 2.2vw, 1.5rem);
   background: rgb(34 18 39 / 68%);
   backdrop-filter: blur(2px);
-  overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
@@ -197,7 +196,6 @@
   background: #ffcfa1;
   color: #221227;
   cursor: pointer;
-  overflow: hidden;
   white-space: nowrap;
   transition:
     width 200ms ease,
@@ -734,7 +732,6 @@
   flex-direction: column;
   gap: 12px;
   overflow-y: auto;
-  overflow-x: hidden;
   padding-right: 14px;
   scrollbar-gutter: stable;
 }
@@ -1055,7 +1052,6 @@
   .create-survey-page {
     justify-content: flex-start;
     padding: 0;
-    overflow-x: hidden;
   }
 
   .create-survey-canvas {

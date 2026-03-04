@@ -8,7 +8,6 @@
   min-height: 100dvh;
   padding-inline: clamp(1.5rem, 4vw, 4rem);
   padding-bottom: clamp(2rem, 5vw, 4.5rem);
-  overflow-x: hidden;
   background: var(--color-bg);
 }
 
@@ -132,7 +131,6 @@
   line-height: 1;
   letter-spacing: 0;
   cursor: pointer;
-  overflow: hidden;
   white-space: nowrap;
   box-shadow: 0 8px 16px rgb(0 0 0 / 16%);
   transition:
@@ -152,7 +150,6 @@
   height: 24px;
   display: grid;
   place-items: center;
-  overflow: hidden;
 }
 
 .new-survey-button__icon-svg {
@@ -317,7 +314,6 @@
   cursor: pointer;
   border-top-right-radius: 80px;
   color: #221227;
-  overflow: hidden;
 }
 
 .highlight-card__category {
@@ -570,7 +566,6 @@
   border-bottom-right-radius: 5px;
   border-bottom-left-radius: 5px;
   color: #fefdff;
-  overflow: hidden;
 }
 
 .list-card:disabled {
@@ -701,7 +696,6 @@
     flex-wrap: nowrap;
     justify-content: flex-start;
     overflow-x: auto;
-    overflow-y: hidden;
     width: 100%;
     padding-bottom: 8px;
     -webkit-overflow-scrolling: touch;
