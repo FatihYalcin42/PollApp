@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { getAllSurveys, subscribeToSurveyChanges } from '../../shared/services/survey-storage.service';
 import { type Survey } from '../../shared/interfaces/survey.interface';
 import { CreateSurveyPage } from '../create-survey/create-survey-page';
+import { SURVEY_CATEGORIES } from '../../shared/constants/survey-categories';
 
 @Component({
   selector: 'app-home-page',
@@ -84,19 +85,21 @@ export class HomePage implements OnInit, OnDestroy {
     this.closeCreateSurveyDialog();
   }
 
-  /** @returns Distinct category names from all surveys. */
+  /** @returns Shared category names shown in home filter dropdown. */
   protected get sortCategories(): string[] {
-    return [...new Set(this.surveys.map((survey) => survey.category))];
+    return [...SURVEY_CATEGORIES];
   }
 
   /** @returns All surveys that are still active. */
   protected get activeSurveys(): Survey[] {
-    return this.surveys.filter((survey) => survey.daysLeft > 0);
+    const active = this.surveys.filter((survey) => survey.daysLeft > 0);
+    return this.filterByCategory(active);
   }
 
   /** @returns All surveys that are already finished. */
   protected get pastSurveys(): Survey[] {
-    return this.surveys.filter((survey) => survey.daysLeft <= 0);
+    const past = this.surveys.filter((survey) => survey.daysLeft <= 0);
+    return this.filterByCategory(past);
   }
 
   /** @returns Up to three active surveys with the nearest end date. */
@@ -104,11 +107,9 @@ export class HomePage implements OnInit, OnDestroy {
     return this.activeSurveys.slice(0, 3);
   }
 
-  /** @returns Active or past surveys, optionally filtered by category. */
+  /** @returns Active or past surveys based on the selected tab. */
   protected get visibleSurveys(): Survey[] {
-    const list = this.isPastView ? this.pastSurveys : this.activeSurveys;
-    if (!this.selectedSortCategory) return list;
-    return list.filter((survey) => survey.category === this.selectedSortCategory);
+    return this.isPastView ? this.pastSurveys : this.activeSurveys;
   }
 
   /**
@@ -118,6 +119,16 @@ export class HomePage implements OnInit, OnDestroy {
    */
   private sortByDays(items: Survey[]): Survey[] {
     return [...items].sort((a, b) => a.daysLeft - b.daysLeft);
+  }
+
+  /**
+   * Filters a survey list by selected category.
+   * @param items Survey list to filter.
+   * @returns Original list or category-filtered list.
+   */
+  private filterByCategory(items: Survey[]): Survey[] {
+    if (!this.selectedSortCategory) return items;
+    return items.filter((survey) => survey.category === this.selectedSortCategory);
   }
 
   /** Starts auto-hide timer for the created overlay. */

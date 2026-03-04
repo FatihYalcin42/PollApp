@@ -3,6 +3,7 @@ import { Component, EventEmitter, HostBinding, HostListener, Inject, Input, OnCh
 import { Router } from '@angular/router';
 import { addSurvey, nextSurveyId } from '../../shared/services/survey-storage.service';
 import { type Survey } from '../../shared/interfaces/survey.interface';
+import { CATEGORY_PLACEHOLDER_LABEL, SURVEY_CATEGORIES } from '../../shared/constants/survey-categories';
 
 const MAX_INPUT_LENGTH = 60;
 const MAX_DESCRIPTION_LENGTH = 160;
@@ -29,20 +30,13 @@ export class CreateSurveyPage implements OnChanges, OnDestroy {
   @Output() closeRequested = new EventEmitter<void>();
   @Output() surveyPublished = new EventEmitter<void>();
   protected isCategoryDropdownOpen = false;
-  protected selectedCategory = 'Choose categorie';
+  protected selectedCategory = CATEGORY_PLACEHOLDER_LABEL;
   protected readonly minEndDate = this.getTodayIsoDate();
   protected surveyTitle = '';
   protected surveyDescription = '';
   protected endDate = '';
   protected showValidationErrors = false;
-  protected readonly categories = [
-    'Team Activities',
-    'Health & Wellness',
-    'Gaming & Entertainment',
-    'Education & Learning',
-    'Lifestyle & Preferences',
-    'Technology & Innovation',
-  ];
+  protected readonly categories = SURVEY_CATEGORIES;
   protected readonly maxAnswerFields = 6;
   protected readonly maxQuestions = 6;
   protected questions: QuestionItem[] = [
@@ -370,12 +364,18 @@ export class CreateSurveyPage implements OnChanges, OnDestroy {
   private async buildSurvey(): Promise<Survey> {
     return {
       id: await nextSurveyId(),
-      category: this.selectedCategory === 'Choose categorie' ? 'Uncategorized' : this.selectedCategory,
+      category: this.resolveCategory(),
       title: this.surveyTitle,
       description: this.surveyDescription.trim(),
       daysLeft: this.getDaysLeft(),
       questions: this.getSurveyQuestions(),
     };
+  }
+
+  /** @returns Selected category or first shared category as fallback. */
+  private resolveCategory(): string {
+    if (this.selectedCategory !== CATEGORY_PLACEHOLDER_LABEL) return this.selectedCategory;
+    return SURVEY_CATEGORIES[0];
   }
 
   /** @returns Days until survey end date. */
