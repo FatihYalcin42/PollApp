@@ -301,20 +301,23 @@
 
 .highlight-card {
   width: 321px;
-  height: 310px;
+  min-height: 310px;
+  height: auto;
   opacity: 1;
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
   gap: 10px;
-  padding: 40px 18px;
+  padding: 40px 18px 72px;
   background: #faf5fe;
   border: 0;
   text-align: left;
   cursor: pointer;
   border-top-right-radius: 80px;
   color: #221227;
+  overflow: hidden;
 }
 
 .highlight-card__category {
@@ -345,7 +348,10 @@
 }
 
 .highlight-card__meta {
-  margin-top: auto;
+  position: absolute;
+  left: 18px;
+  bottom: 40px;
+  max-width: calc(100% - 36px);
   padding: 4px 8px;
   border-radius: 3px;
   background: #ffcfa1;
@@ -545,14 +551,16 @@
 
 .list-card {
   width: 513px;
-  height: 127px;
+  min-height: 127px;
+  height: auto;
   opacity: 1;
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
   gap: 24px;
-  padding: 12px 20px;
+  padding: 12px 20px 42px;
   border: 0;
   text-align: left;
   cursor: pointer;
@@ -562,6 +570,7 @@
   border-bottom-right-radius: 5px;
   border-bottom-left-radius: 5px;
   color: #fefdff;
+  overflow: hidden;
 }
 
 .list-card:disabled {
@@ -601,8 +610,10 @@
 }
 
 .list-card__meta {
-  margin-top: auto;
-  align-self: flex-end;
+  position: absolute;
+  right: 20px;
+  bottom: 12px;
+  max-width: calc(100% - 40px);
   padding: 4px 8px;
   border-radius: 3px;
   background: #ffcfa1;
@@ -824,7 +835,7 @@
   }
 
   .list-card__meta {
-    margin-top: 4px;
+    bottom: 10px;
   }
 
   .surveys-toolbar {
