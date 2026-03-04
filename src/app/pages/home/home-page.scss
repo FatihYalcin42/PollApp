@@ -54,7 +54,7 @@
 
 .hero {
   width: 100%;
-  min-height: calc(100dvh - clamp(2rem, 5vw, 4.5rem));
+  min-height: 100dvh;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(280px, 430px);
   gap: clamp(1.5rem, 4vw, 5rem);
@@ -249,7 +249,8 @@
 }
 
 .surveys {
-  margin-top: clamp(2rem, 5vw, 3.4rem);
+  margin-top: 0;
+  padding-top: clamp(2rem, 5vw, 3.4rem);
   width: 100%;
   text-align: center;
 }
@@ -726,7 +727,7 @@
   }
 
   .hero {
-    min-height: calc(100dvh - clamp(8.2rem, 34vw, 10.2rem));
+    min-height: 100dvh;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
