@@ -129,7 +129,7 @@
                 class="list-card"
                 type="button"
                 [routerLink]="['/single-survey', survey.id]"
-                [disabled]="survey.daysLeft <= 0"
+                [disabled]="survey.daysLeft < 0"
               >
                 <span class="list-card__category">{{ survey.category }}</span>
                 <span class="list-card__title">{{ survey.title }}</span>

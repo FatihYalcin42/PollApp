@@ -92,13 +92,13 @@ export class HomePage implements OnInit, OnDestroy {
 
   /** @returns All surveys that are still active. */
   protected get activeSurveys(): Survey[] {
-    const active = this.surveys.filter((survey) => survey.daysLeft > 0);
+    const active = this.surveys.filter((survey) => survey.daysLeft >= 0);
     return this.filterByCategory(active);
   }
 
   /** @returns All surveys that are already finished. */
   protected get pastSurveys(): Survey[] {
-    const past = this.surveys.filter((survey) => survey.daysLeft <= 0);
+    const past = this.surveys.filter((survey) => survey.daysLeft < 0);
     return this.filterByCategory(past);
   }
 
