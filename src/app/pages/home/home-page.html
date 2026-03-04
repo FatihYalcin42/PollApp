@@ -133,9 +133,11 @@
               >
                 <span class="list-card__category">{{ survey.category }}</span>
                 <span class="list-card__title">{{ survey.title }}</span>
-                <span class="list-card__meta">
-                  Ends in {{ survey.daysLeft }} Day{{ survey.daysLeft === 1 ? '' : 's' }}
-                </span>
+                @if (!isPastView) {
+                  <span class="list-card__meta">
+                    Ends in {{ survey.daysLeft }} Day{{ survey.daysLeft === 1 ? '' : 's' }}
+                  </span>
+                }
               </button>
             </article>
           }
