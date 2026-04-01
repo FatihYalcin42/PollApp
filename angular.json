@@ -47,8 +47,8 @@
               "outputHashing": "all"
             },
             "fdp": {
-              "baseHref": "/angular-projects/PollApp/",
-              "deployUrl": "/angular-projects/PollApp/"
+              "baseHref": "/",
+              "deployUrl": "/"
             },
             "lve": {
               "baseHref": "/",
